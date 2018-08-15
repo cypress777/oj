@@ -19,19 +19,18 @@ int main()
     vector<int> primes;
     vector<int> fprimes;
     time_t t0 = time(NULL);
-//    fgetPrimeDivisor(600851475143, primes);
-//    getPrimeDivisor(600851475143, primes);
+    getPrimeDivisor(600851475143, primes);
     time_t t1 = time(NULL);
     fgetPrimeDivisor(600851475143, fprimes);
     time_t t2 = time(NULL);
 
-//    cout << "time spent: " << t1 - t0 << endl;
-//    for (int i = 0; i < primes.size(); i++)
-//    {
-//        cout << primes[i] << endl;
-//    }
+    cout << "method1 time spent: " << t1 - t0 << endl;
+    for (int i = 0; i < primes.size(); i++)
+    {
+        cout << primes[i] << endl;
+    }
 
-    cout << "time spent: " << t2 - t1 << endl;
+    cout << "method2 time spent: " << t2 - t1 << endl;
     for (int i = 0; i < fprimes.size(); i++)
     {
         cout << fprimes[i] << endl;
@@ -93,11 +92,11 @@ void getPrimeDivisor(long num, vector<int>& primeDivisors)
 
 bool isPrime(long N)
 {
-    if (N == 1)
+    if (N == 1 || N == 4 || N ==6)
         return false;
     if (N == 2 || N == 3 || N == 5 || N == 7)
         return true;
-    for (auto i = N - 1; i > 1; i--)
+    for (auto i = 8; i < N; i++)
     {
         if (N%i == 0) return false;
     }
