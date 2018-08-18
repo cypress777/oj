@@ -5,10 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include "utils.hpp"
 
 using namespace std;
-
-bool isPrime(long N);
 
 void getPrimeDivisor(long num, vector<int>& primeDivisors);
 
@@ -88,17 +87,4 @@ void getPrimeDivisor(long num, vector<int>& primeDivisors)
             }
         }
     }
-}
-
-bool isPrime(long N)
-{
-    if (N == 1 || N == 4 || N ==6)
-        return false;
-    if (N == 2 || N == 3 || N == 5 || N == 7)
-        return true;
-    for (auto i = 8; i < N; i++)
-    {
-        if (N%i == 0) return false;
-    }
-    return true;
 }
