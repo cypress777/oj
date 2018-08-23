@@ -22,7 +22,7 @@ int main()
     int res = 0;
     for (int i = 1; i < 12; i++)
     {
-        res += LagrangePolynomial(1, i, xVals, yVals);
+        res += LagrangePolynomial(i, i+1, xVals, yVals);
     }
     cout << res << endl;
 }
