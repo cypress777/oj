@@ -2,44 +2,48 @@
 #include <vector>
 #include <assert.h>
 #include <math.h>
+#include <iomanip>
 
 using namespace std;
 
-vector<float> LagrangePolynomial(int k, int n, vector<float> xVals, vector<float> yVals);
-float f(n);
+double LagrangePolynomial(int k, int n, vector<double> xVals, vector<double> yVals);
+double f(int n);
 
 int main()
 {
-    vector<float> xVals;
-    vector<float> yVals;
+    vector<double> xVals;
+    vector<double> yVals;
 
     for (int i = 1; i < 11; i++)
     {
         xVals.push_back(i);
         yVals.push_back(f(i));
+        cout << xVals[i-1] << " " << yVals[i-1] << endl;
     }
 
-    int res = 0;
-    for (int i = 1; i < 12; i++)
+    double res = 0;
+    for (int i = 1; i < 11; i++)
     {
-        res += LagrangePolynomial(i, i+1, xVals, yVals);
+       double op =  LagrangePolynomial(i, i+1, xVals, yVals);
+       res += op;
+       cout << setprecision(15) << yVals[i-1] << " " << op << endl;
     }
     cout << res << endl;
 }
 
-vector<float> LagrangePolynomial(int k, int n, vector<float> xVals, vector<float> yVals)
+double LagrangePolynomial(int k, int n, vector<double> xVals, vector<double> yVals)
 {
     assert(xVals.size() == yVals.size());
 
-    int res = 0;
+    double res = 0;
     for (int i = 0; i < k; i++)
     {
-        int L = 1;
+        double L = 1;
         for (int j = 0; j < k; j++)
         {
             if (j != i)
             {
-                L *= (n - x[j])/(x[i] - x[j])
+                L *= (n - xVals[j])/(xVals[i] - xVals[j]);
             }
         }
         res += yVals[i]*L;
@@ -48,7 +52,7 @@ vector<float> LagrangePolynomial(int k, int n, vector<float> xVals, vector<float
     return res;
 }
 
-float f(n)
+double f(int n)
 {
-    return (pow(-1*n, 10) - 1)/(-1*n - 1);
+    return (1 + pow(n, 11))/(1 + n);
 }
