@@ -20,6 +20,10 @@ int main()
         tmp = largeNumMult(c10, c100);
         for (int j = 0; j < tmp.size(); j++)
             c100[j] = tmp[j];
+
+        for (int k = 0; k < c100.size(); k++)
+            cout << c100[c100.size() - k - 1];
+        cout << endl;
     }
 
     vector<char> c1000(400, '0');
