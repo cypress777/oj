@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(oj)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES 10001thPrime.cpp utils.hpp utils.cpp)
-add_executable(10001thPrime ${SOURCE_FILES})
+set(SOURCE_FILES PowerDigitSum.cpp utils.hpp utils.cpp LargeNumHelper.cpp LargeNumHelper.hpp)
+add_executable(a.out ${SOURCE_FILES})
