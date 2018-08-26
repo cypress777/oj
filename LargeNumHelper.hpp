@@ -12,7 +12,7 @@ using namespace std;
 
 vector<char> largeNumSum(const vector<char>& a, const vector<char>& b);
 
-vector<char> largeNumMinus(const vector<char>& a, const vector<char>& b);
+vector<char> largeNumSubtraction(const vector<char>& a, const vector<char>& b);
 
 vector<char> largeNumMult(const vector<char>& a, const vector<char>& b);
 

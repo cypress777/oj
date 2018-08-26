@@ -26,18 +26,23 @@ vector<char> largeNumSum(const vector<char>& a, const vector<char>& b)
     return res;
 }
 
-vector<char> largeNumMinus(const vector<char>& a, const vector<char>& b)
+vector<char> largeNumSubtraction(const vector<char>& a, const vector<char>& b)
 {
     int aLen = a.size();
     int bLen = b.size();
     bool exchange = false;
 
 
-    for (int i = aLen - 1; i > -1; i--)
+    for (int i = max(aLen, bLen) - 1; i > -1; i--)
     {
-        if (i > (bLen - 1) && a[i] != 0)
+        if (i > bLen - 1 && a[i] != 0)
         {
             exchange = false;
+            break;
+        }
+        else if (i > aLen - 1 && b[i] != 0)
+        {
+            exchange = true;
             break;
         }
         if (a[i] > b[i])
@@ -65,7 +70,7 @@ vector<char> largeNumMinus(const vector<char>& a, const vector<char>& b)
             int bVal = i < bLen ? int(b[i] - '0') : 0;
 
             int reminder = aVal > bVal || aVal == bVal ? aVal - bVal : 10 + aVal - bVal;
-            borrow = aVal > bVal ? 0 : 1;
+            borrow = aVal > bVal || bVal == aVal ? 0 : 1;
             res[i] = char(reminder + '0');
         }
     }
@@ -79,7 +84,7 @@ vector<char> largeNumMinus(const vector<char>& a, const vector<char>& b)
             bVal -= borrow;
 
             int reminder = bVal > aVal || bVal == aVal ? bVal - aVal : 10 + bVal - aVal;
-            borrow = bVal > aVal ? 0 : 1;
+            borrow = bVal > aVal || bVal == aVal ? 0 : 1;
             res[i] = char(reminder + '0');
         }
         res[i] = '-';
