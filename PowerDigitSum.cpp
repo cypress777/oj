@@ -10,6 +10,7 @@ int main()
 {
     vector<char> c10{'4','2','0','1'};
     vector<char> c100(50, '0');
+    vector<char> c1000(350, '0');
 
     for (int i = 0; i < c10.size(); i++)
         c100[i] = c10[i];
@@ -19,7 +20,7 @@ int main()
 
         vector<char> tmp;
         tmp = largeNumMult(c10, c100);
-        for (int j = 0; j < tmp.size(); j++)
+        for (int j = 0; j < c100.size(); j++)
             c100[j] = tmp[j];
 
         for (int k = 0; k < c100.size(); k++)
@@ -27,16 +28,14 @@ int main()
         cout << endl;
     }
 
-    vector<char> c1000(400, '0');
     for (int i = 0; i < c100.size(); i++)
         c1000[i] = c100[i];
 
     for (int i = 2; i < 11; i++)
     {
-
         vector<char> tmp;
         tmp = largeNumMult(c100, c1000);
-        for (int j = 0; j < tmp.size(); j++)
+        for (int j = 0; j < c1000.size(); j++)
             c1000[j] = tmp[j];
 
         for (int k = 0; k < c1000.size(); k++)
