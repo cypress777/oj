@@ -32,21 +32,23 @@ vector<char> largeNumMinus(const vector<char>& a, const vector<char>& b)
     int bLen = b.size();
     bool exchange = false;
 
-    if (bLen > aLen) exchange = true;
-    else if (aLen == bLen)
+
+    for (int i = aLen - 1; i > -1; i--)
     {
-        for (int i = aLen - 1; i > -1; i--)
+        if (i > (bLen - 1) && a[i] != 0)
         {
-            if (a[i] > b[i])
-            {
-                exchange = false;
-                break;
-            }
-            else if (a[i] < b[i])
-            {
-                exchange = true;
-                break;
-            }
+            exchange = false;
+            break;
+        }
+        if (a[i] > b[i])
+        {
+            exchange = false;
+            break;
+        }
+        else if (a[i] < b[i])
+        {
+            exchange = true;
+            break;
         }
     }
 
@@ -90,34 +92,32 @@ vector<char> largeNumMult(const vector<char>& a, const vector<char>& b)
 {
     int aLen = a.size();
     int bLen = b.size();
-    vector<vector<char>> tmpRes;
-    vector<char> res;
+    vector<vector<char>> tmpRes(aLen, vector<char>(aLen + bLen + 1, '0'));
+    vector<char> res(aLen + bLen + 1, '0');
 
     for (int i = 0; i < aLen; i++)
     {
-        vector<char> tmp(aLen + bLen + 1, '0');
         int carry = 0;
         int j = 0;
         for (j = 0; j < bLen; j++)
         {
             int mult = int(b[j] - '0') * int(a[i] - '0') + carry;
-            tmp[j + i] = char(mult % 10 + '0');
+            tmpRes[i][i + j] = char(mult % 10 + '0');
             carry = mult / 10;
         }
-        tmp[i + j] = char(carry + '0');
-        tmpRes.push_back(tmp);
+        tmpRes[i][i + j] = char(carry + '0');
     }
 
-    for (int i = 0; i < tmpRes.size() - 1; i++)
+    for (int i = 0; i < aLen - 1; i++)
     {
         vector<char> sum;
-        sum = largeNumSum(tmpRes[i], tmpRes[i+1]);
+        sum = largeNumSum(tmpRes[i], tmpRes[i + 1]);
         for (int j = 0; j < tmpRes[i].size(); j++)
             tmpRes[i+1][j] = sum[j];
     }
 
-    for (int i = 0; i < tmpRes[tmpRes.size() - 1].size(); i++)
-        res.push_back(tmpRes[tmpRes.size() - 1][i]);
+    for (int i = 0; i < aLen + bLen + 1; i++)
+        res[i] = tmpRes[aLen - 1][i];
 
     return res;
 }

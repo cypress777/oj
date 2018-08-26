@@ -10,6 +10,7 @@ int main()
 {
     vector<char> c10{'4','2','0','1'};
     vector<char> c100(50, '0');
+
     for (int i = 0; i < c10.size(); i++)
         c100[i] = c10[i];
 
