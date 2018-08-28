@@ -16,4 +16,10 @@ vector<char> largeNumSubtraction(const vector<char>& a, const vector<char>& b);
 
 vector<char> largeNumMult(const vector<char>& a, const vector<char>& b);
 
+void mutLargeNumSum(vector<char>& a, vector<char>& b);
+
+void mutLargeNumSubtraction(vector<char>& a, vector<char>& b);
+
+void mutLargeNumMult(vector<char>& a, vector<char>& b);
+
 #endif //OJ_LARGENUMHELPER_HPP
