@@ -12,3 +12,15 @@ def d(n):
     if i*i == n:
         res += i
     return res
+
+def isPrime(N):
+    if N < 1:
+        return False
+    if N == 1 or N == 4 or N ==6:
+        return False
+    if N == 2 or N == 3 or N == 5 or N == 7:
+        return True
+    for i in range(2, N):
+        if N != i and N%i == 0:
+            return False
+    return True

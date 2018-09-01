@@ -31,11 +31,11 @@ def nextPermuteStr(str):
 
 
 
+if __name__ == '__main__':
+    str = [i for i in range(10)]
+    i = 1
+    while i < 1000000:
+        str = nextPermuteStr(str)
+        i += 1
 
-str = [i for i in range(10)]
-i = 1
-while i < 1000000:
-    str = nextPermuteStr(str)
-    i += 1
-
-print(str)
+    print(str)
