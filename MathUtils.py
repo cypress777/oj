@@ -24,3 +24,28 @@ def isPrime(N):
         if N != i and N%i == 0:
             return False
     return True
+
+def genPrimeTab(N):
+    count = 0
+    primeTab = []
+    isPrime = []
+    for n in range(0, N+1):
+        isPrime.append(0)
+    for i in range(2, N):
+        if isPrime[i] == 0:
+            primeTab.append(i)
+            count += 1
+
+        for j in range(0, count):
+            if i * primeTab[j] > N:
+                break
+            isPrime[i * primeTab[j]] = 1
+            if i % primeTab[j] == 0:
+                break
+
+    primeTab = primeTab[0 : count]
+    return primeTab
+
+if __name__ == '__main__':
+    tab = genPrimeTab(10)
+    print (tab)
