@@ -2,7 +2,7 @@
 # or Am * Bn = Cm+n+1 2*(m + n) + 1= 9
 # =>  m + n = 4
 import math
-import LexicographicPermutations as lp
+import Permutation as lp
 
 numbers = [i for i in range(1, 10)]
 ans = set([])

@@ -51,8 +51,8 @@ def lastPermuteStr(str):
     prestr = str[ : i]
     surstr = str[i : ]
     for i in range(0, len(surstr)):
-        if surstr[i] < prestr[-1]:
-            surstr[i], prestr[-1] = prestr[-1], surstr[i]
+        if surstr[len(surstr) - 1 - i] < prestr[-1]:
+            surstr[len(surstr) - 1 - i], prestr[-1] = prestr[-1], surstr[len(surstr) - 1 - i]
             break
     surstr.sort(reverse=True)
     sstr = prestr+surstr
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     #     i += 1
     #
     # print(str)
-    str = list('123598476')
+    str = list('7652413')
     print(str)
     nstr = nextPermuteStr(str)
     print(nstr)

@@ -16,7 +16,7 @@ def d(n):
 def isPrime(N):
     if N < 1:
         return False
-    if N == 1 or N == 4 or N ==6:
+    if N == 0 or N == 1 or N == 4 or N ==6:
         return False
     if N == 2 or N == 3 or N == 5 or N == 7:
         return True

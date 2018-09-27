@@ -1,6 +1,5 @@
 import time
 import MathUtils
-import LexicographicPermutations as permutation
 
 time0 = time.time()
 primeTable = MathUtils.genPrimeTab(1000000)
