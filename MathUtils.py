@@ -1,4 +1,5 @@
 import math
+import time
 
 # Sum of the proper divisors of n
 def d(n):
@@ -28,24 +29,35 @@ def isPrime(N):
 def genPrimeTab(N):
     count = 0
     primeTab = []
-    isPrime = []
-    for n in range(0, N+1):
-        isPrime.append(0)
+    isPrime = [0] * (N + 1)
+
     for i in range(2, N):
         if isPrime[i] == 0:
             primeTab.append(i)
             count += 1
-
-        for j in range(0, count):
-            if i * primeTab[j] > N:
+        for prime in primeTab:
+            if i * prime > N:
                 break
-            isPrime[i * primeTab[j]] = 1
-            if i % primeTab[j] == 0:
+            isPrime[i * prime] = 1
+            if i % prime == 0:
                 break
-
-    primeTab = primeTab[0 : count]
     return primeTab
 
 if __name__ == '__main__':
+    time0 = time.time()
     tab = genPrimeTab(10)
-    print (tab)
+    time1 = time.time()
+    tab = genPrimeTab(100)
+    time2 = time.time()
+    tab = genPrimeTab(1000)
+    time3 = time.time()
+    tab = genPrimeTab(10000)
+    time4 = time.time()
+    tab = genPrimeTab(100000)
+    time5 = time.time()
+
+    print(time1 - time0)
+    print(time2 - time1)
+    print(time3 - time2)
+    print(time4 - time3)
+    print(time5 - time4)
