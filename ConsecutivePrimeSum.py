@@ -23,7 +23,7 @@ def sum_length(prime):
 max = 1
 num = 2
 for prime in reversed_tab:
-    if prime < N / 10 * 9:
+    if prime < N / 10:
         break
     length = sum_length(prime)
     if length > max:
