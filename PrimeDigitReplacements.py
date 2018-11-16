@@ -14,7 +14,7 @@ print(len(prime_tab))
 for prime in prime_tab:
     index = [1, 2, 3]
     end = [3, 4, 5]
-    prime_digits = [int(dig) for dig in str(prime)]
+    prime_digits = [int(dig) for dig in reversed(str(prime))]
     while index[2] < end[2] or index[1] < end[1] or index[0] < end[0]:
         if prime_digits[index[0]] == prime_digits[index[1]] and prime_digits[index[0]] == prime_digits[index[2]]:
             family = set()
