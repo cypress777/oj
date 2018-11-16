@@ -8,8 +8,6 @@ min_prime = pow(10, power - 1)
 while prime_tab[min_index] < min_prime:
     min_index += 1
 prime_tab = prime_tab[min_index :]
-print(prime_tab[0])
-print(len(prime_tab))
 
 for prime in prime_tab:
     index = [1, 2, 3]
