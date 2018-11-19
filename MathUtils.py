@@ -26,6 +26,13 @@ def isPrime(N):
             return False
     return True
 
+def isPrimeAug(n, pl):
+    for p in pl:
+        if n % p == 0:
+            return False
+        if p * p > n:
+            return True
+
 def genPrimeTab(N):
     count = 0
     primeTab = []
