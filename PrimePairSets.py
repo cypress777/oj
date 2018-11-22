@@ -1,7 +1,7 @@
 import MathUtils as mu
 
 pt = mu.genPrimeTab(10000)
-ppt = mu.genPrimeTab(100000)
+ppt = mu.genPrimeTab(1000000)
 lpt = len(pt)
 sidx = []
 pl = []
@@ -17,10 +17,10 @@ def get_digit(num):
 
 def has_property(l):
     for i in range(0, len(l) - 1):
-        x = l[i]
+        x = pt[l[i]]
         dx = get_digit(x)
         for j in range(i + 1, len(l)):
-            xx = l[j]
+            xx = pt[l[j]]
             dxx = get_digit(xx)
             a = x + xx * pow(10, dx + 1)
             b = xx + x * pow(10, dxx + 1)
