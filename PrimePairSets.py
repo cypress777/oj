@@ -1,10 +1,9 @@
 import MathUtils as mu
 
-pt = mu.genPrimeTab(10000)
+pt = mu.genPrimeTab(100000)
 ppt = mu.genPrimeTab(1000000)
 lpt = len(pt)
 sidx = []
-pl = []
 ss = pt[-1] * 5
 
 def get_digit(num):
@@ -12,20 +11,19 @@ def get_digit(num):
     while num // 10 > 0:
         num //= 10
         d += 1
-    return d
+    return d + 1
 
 
 def has_property(l):
-    for i in range(0, len(l) - 1):
-        x = pt[l[i]]
-        dx = get_digit(x)
-        for j in range(i + 1, len(l)):
-            xx = pt[l[j]]
-            dxx = get_digit(xx)
-            a = x + xx * pow(10, dx + 1)
-            b = xx + x * pow(10, dxx + 1)
-            if not mu.isPrimeAug(a, ppt) or not mu.isPrimeAug(b, ppt):
-                return False
+    x = pt[l[-1]]
+    dx = get_digit(x)
+    for j in range(0, len(l) - 1):
+        xx = pt[l[j]]
+        dxx = get_digit(xx)
+        a = x + xx * pow(10, dx)
+        b = xx + x * pow(10, dxx)
+        if not mu.isPrimeAug(a, ppt) or not mu.isPrimeAug(b, ppt):
+            return False
     return True
 
 def expand_list(idx):
@@ -45,7 +43,7 @@ def expand_list(idx):
         i = idx[-1]
 
     for ii in range(i + 1, lpt):
-        idxx = idx.copy()
+        idxx = list(idx)
         idxx.append(ii)
         if sum([pt[k] for k in idxx]) + (5 - len(idxx)) * pt[ii] > ss:
             break
@@ -53,5 +51,7 @@ def expand_list(idx):
             expand_list(idxx)
 
 expand_list([])
+print(lpt)
 print(sidx)
-print(sum(sidx))
+print([pt[i] for i in sidx])
+print(sum(pt[i] for i in sidx))
