@@ -1,6 +1,7 @@
 import MathUtils as mu
 
 pt = mu.genPrimeTab(10000)
+ppt = mu.genPrimeTab(100000)
 lpt = len(pt)
 sidx = []
 pl = []
@@ -23,12 +24,13 @@ def has_property(l):
             dxx = get_digit(xx)
             a = x + xx * pow(10, dx + 1)
             b = xx + x * pow(10, dxx + 1)
-            if not mu.isPrimeAug(a, pt) or not mu.isPrimeAug(b, pt):
+            if not mu.isPrimeAug(a, ppt) or not mu.isPrimeAug(b, ppt):
                 return False
     return True
 
 def expand_list(idx):
     global ss
+    global sidx
 
     if len(idx) > 4:
         s = sum([pt[i] for i in idx])
@@ -44,11 +46,12 @@ def expand_list(idx):
 
     for ii in range(i + 1, lpt):
         idxx = idx.copy()
-        idxx.append(pt[ii])
-        if sum([pt[k] for k in idxx]) + (5 - len(idxx) * pt[ii]) > ss:
+        idxx.append(ii)
+        if sum([pt[k] for k in idxx]) + (5 - len(idxx)) * pt[ii] > ss:
             break
         if has_property(idxx):
             expand_list(idxx)
 
 expand_list([])
 print(sidx)
+print(sum(sidx))
