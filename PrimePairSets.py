@@ -1,8 +1,10 @@
 import MathUtils as mu
 
-prime_tab = mu.genPrimeTab(1000000)
-lp = len(prime_tab)
-print(lp)
+pt = mu.genPrimeTab(10000)
+lpt = len(pt)
+sidx = []
+pl = []
+ss = pt[-1] * 5
 
 def get_digit(num):
     d = 0
@@ -19,34 +21,34 @@ def has_property(l):
         for j in range(i + 1, len(l)):
             xx = l[j]
             dxx = get_digit(xx)
-            if not mu.isPrimeAug(x + xx * pow(10, dx + 1), prime_tab) or not mu.isPrimeAug(xx + x * pow(10, dxx + 1),
-                                                                                           prime_tab):
+            a = x + xx * pow(10, dx + 1)
+            b = xx + x * pow(10, dxx + 1)
+            if not mu.isPrimeAug(a, pt) or not mu.isPrimeAug(b, pt):
                 return False
     return True
 
+def expand_list(idx):
+    global ss
 
-idx = [0, 1, 2, 3, 4, 5]
-end = [lp - 5, lp - 4, lp - 3, lp - 2, lp - 1]
+    if len(idx) > 4:
+        s = sum([pt[i] for i in idx])
+        if s < ss:
+            ss = s
+            sidx = idx
 
-fin = False
-while not fin:
-    pl = [prime_tab[idx[n]] for n in range(0, 5)]
-    if has_property(pl):
-        print(pl)
-        sum = 0
-        for p in pl:
-            sum += p
-        print(sum)
-        break
+    i = -1
+    if len(idx) > 0:
+        if idx[-1] >= lpt - 1:
+            return
+        i = idx[-1]
 
-    mini = -1
-    minp = prime_tab[-1]
-    for i in range(0, 5):
-        ii = 4 - i
-        if idx[ii] == lp or (ii < 4 and not idx[ii] < idx[ii + 1] - 1):
-            continue
-        sub = prime_tab[idx[ii] + 1] - prime_tab[idx[ii]]
-        if sub < minp:
-            mini = ii
-            minp = sub
-    idx[mini] += 1
+    for ii in range(i + 1, lpt):
+        idxx = idx.copy()
+        idxx.append(pt[ii])
+        if sum([pt[k] for k in idxx]) + (5 - len(idxx) * pt[ii]) > ss:
+            break
+        if has_property(idxx):
+            expand_list(idxx)
+
+expand_list([])
+print(sidx)
