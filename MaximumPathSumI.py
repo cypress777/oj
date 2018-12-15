@@ -1,7 +1,9 @@
 import numpy as np
 
-pyramid = np.zeros([15, 15])
-pyramidSum = np.zeros([15, 15])
+S = 100
+
+pyramid = np.zeros([S, S])
+pyramidSum = np.zeros([S, S])
 
 def maxPath(m, n):
     assert m > 0 or m == 0
@@ -10,7 +12,7 @@ def maxPath(m, n):
     if pyramidSum[m][n] != 0:
         return pyramidSum[m][n]
 
-    if m == 14:
+    if m == S - 1:
         pyramidSum[m][n] = pyramid[m][n]
         return pyramidSum[m][n]
 
@@ -19,13 +21,13 @@ def maxPath(m, n):
         return pyramidSum[m][n]
 
 
-with open("pyramidI.txt") as f:
+with open("p067_triangle.txt") as f:
     nums = f.readlines()
     nums = [x.strip() for x in nums]
 
-    pyramid = np.zeros([15, 15])
+    pyramid = np.zeros([S, S])
 
-    for i in range(15):
+    for i in range(S):
         row = [int(x) for x in nums[i].split(" ")]
         for j in range(i+1):
             pyramid[i][j] = row[j]
