@@ -60,7 +60,7 @@ def gcd(a, b):
         n = t
     return m
 
-def get_prime_factors(n):
+def get_prime_factors(n, pt):
     pl = []
     for p in pt:
         if p * p > n:

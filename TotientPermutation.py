@@ -41,4 +41,3 @@ for n in range(2, 10000001):
         minn = nn
         min = pp
 print(minn, min, float(minn) / min)
-print(minn, min, float(minn) / min)
