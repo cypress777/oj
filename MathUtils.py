@@ -50,6 +50,28 @@ def genPrimeTab(N):
                 break
     return primeTab
 
+def gcd(a, b):
+    t = 1
+    m = max(a, b)
+    n = min(a, b)
+    while t != 0:
+        t = m % n
+        m = n
+        n = t
+    return m
+
+def get_prime_factors(n):
+    pl = []
+    for p in pt:
+        if p * p > n:
+            break
+        while n % p == 0:
+            pl.append(p)
+            n //= p
+    if n > 1:
+        pl.append(n)
+    return pl
+
 if __name__ == '__main__':
     time0 = time.time()
     tab = genPrimeTab(10)
