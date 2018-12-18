@@ -72,6 +72,14 @@ def get_prime_factors(n, pt):
         pl.append(n)
     return pl
 
+def phi(n, pt):
+    res = n
+    p = set(get_prime_factors(n, pt))
+    for pp in p:
+        # res -= (res / pp)
+        res = res // pp * (pp - 1)
+    return res
+
 if __name__ == '__main__':
     time0 = time.time()
     tab = genPrimeTab(10)
