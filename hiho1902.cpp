@@ -15,13 +15,23 @@
 #include <algorithm>
 using namespace std;
 
+void dfs(int to, const vector<vector<int>> &cvt, vector<int> &cnct, vector<int> &vst) {
+    for (int from : cvt[to]) {
+        if (vst[from] == 0) {
+            vst[from] = 1;
+            cnct[from] = 1;
+            dfs(from, cvt, cnct, vst);
+        }
+    }
+}
+
 void bfs(int idx, const vector<vector<int>> &cvt, vector<int> &cnct) {
     vector<int> queue(1, idx);
     vector<int> vst(26, 0);
     int r = 0, f = 0;
     while (r <= f) {
         int to = queue[r];
-        for (auto from : cvt[to]) {
+        for (int from : cvt[to]) {
             if (vst[from] == 0) {
                 vst[from] = 1;
                 queue.push_back(from);
@@ -57,8 +67,9 @@ int main() {
     }
 
     vector<int> connection(26, 0);
-    bfs('h' - 'a', convert, connection);
-
+//    bfs('h' - 'a', convert, connection);
+    vector<int> vst(26);
+    dfs('h' - 'a', convert, connection, vst);
     int cnt = 0;
     for (int i = 0; i < 26; i++) {
         if (connection[i] == 1) cnt += alps[i];
