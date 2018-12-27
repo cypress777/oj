@@ -39,59 +39,60 @@ int main() {
         }
     }
 
-    cout << "S: " << S << " T: " << T << endl;
-
     cout << "matrix: " << endl;
-    for (int i = 0; i < N * M; i++) {
-        cout << matrix[i] << " ";
+    for (int y = 0; y < M; y++) {
+        for (int x = 0; x < N; x++) {
+            cout << matrix[id(x, y)] << " ";
+        }
+        cout << endl;
     }
-    cout << endl;
     
     vector<vector<int>> graph(N * M, vector<int>());
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < M; y++) {
-            cout << ">> " << id(x, y) << " " << x << " " << y << endl;
             if (matrix[id(x, y)] == 0) continue;
             int xx, yy;
 
             xx = x - 1;
-            while (xx > 0 && matrix[id(xx, y)] != 0 && id(xx, y) != T) --xx;
+            while (xx >= 0 && matrix[id(xx, y)] != 0 && id(xx, y) != T) xx--;
             if (id(xx, y) != T) xx++;
             if (xx != x)
                 graph[id(x, y)].push_back(id(xx, y));
             xx = x + 1;
-            while (xx < N && matrix[id(xx, y) != 0] && id(xx, y) != T) ++xx;
+            while (xx < N && matrix[id(xx, y) != 0] && id(xx, y) != T) xx++;
             if (id(xx, y) != T) xx--;
             if (xx != x)
                 graph[id(x, y)].push_back(id(xx, y));
 
             yy = y - 1;
-            while (yy > 0 && matrix[id(x, yy)] != 0 && id(x, yy) != T) --yy;
+            while (yy >= 0 && matrix[id(x, yy)] != 0 && id(x, yy) != T) yy--;
             if (id(x, yy) != T) yy++;
             if (yy != y)
                 graph[id(x, y)].push_back(id(x, yy));
             yy = y + 1;
-            while (yy < M && matrix[id(x, yy)] != 0 && id(x, yy - 1) != T) ++yy;
+            while (yy < M && matrix[id(x, yy)] != 0 && id(x, yy) != T) yy++;
             if (id(x, yy) != T) yy--;
             if (yy != y)
                 graph[id(x, y)].push_back(id(x, yy));
-
-            cout << "to: " << endl;
-            for (int t : graph[id(x, y)]) {
-                cout <<  t << " ";
-            }
-            cout << endl;
         }
     }
 
-    return 0;
+    cout << "graph: " << endl;
+    for (int i = 0; i < M * N; i++) {
+        cout << i << ": ";
+        for (int j : graph[i]) {
+            cout << j << " ";
+        }
+        cout << endl;
+    }
+
     vector<int> path(N * M, -1);
     path[S] = 0;
 
     vector<int> que;
     vector<int> vst(N * M, 0);
     que.push_back(S);
-    vst[T] = -1;
+    vst[S] = -1;
     int r = 0, f = 0;
     while (r <= f) {
         int cur = que[r];
@@ -102,11 +103,13 @@ int main() {
                 que.push_back(pos);
                 path[pos] = path[cur] + 1;
                 if (pos == T) {
-                    cout << path[pos] <<  endl;
+                    path[pos] -= 1;
                     break;
                 }
                 f++;
             }
         }
     }
+
+    cout << path[T] << endl;
 }
