@@ -19,13 +19,14 @@ int main() {
     int N, M;
     int S, T;
     cin >> N >> M;
-    auto id = [&N](int x, int y) { return y * N + x; };
+
+    auto id = [&M](int x, int y) { return y * M + x; };
 
     vector<int> matrix(N * M, 0);
-    for (int y = 0; y < M; y++) {
+    for (int y = 0; y < N; y++) {
         string symbols;
         cin >> symbols;
-        for (int x = 0; x < N; x++) {
+        for (int x = 0; x < M; x++) {
             char symbol = symbols[x];
             if (symbol == '.') {
                 matrix[id(x, y)] = 1;
@@ -39,52 +40,55 @@ int main() {
         }
     }
 
-    cout << "matrix: " << endl;
-    for (int y = 0; y < M; y++) {
-        for (int x = 0; x < N; x++) {
-            cout << matrix[id(x, y)] << " ";
-        }
-        cout << endl;
-    }
+    auto pass = [&N, &M, &T, &matrix, &id](int x, int y) {
+        if (x < 0 || y < 0 || x >= M || y >= N) return false;
+        if (matrix[id(x, y)] == 0) return false;
+        if (id(x, y) == T) return false;
+        return true;
+    };
+
+    // cout << "matrix: " << endl;
+    // for (int y = 0; y < N; y++) {
+    //     for (int x = 0; x < M; x++) {
+    //         cout << matrix[id(x, y)] << " ";
+    //     }
+    //     cout << endl;
+    // }
+
+    vector<int> dx = {1, 0, -1, 0};
+    vector<int> dy = {0, 1, 0, -1};
     
     vector<vector<int>> graph(N * M, vector<int>());
-    for (int x = 0; x < N; x++) {
-        for (int y = 0; y < M; y++) {
+    for (int x = 0; x < M; x++) {
+        for (int y = 0; y < N; y++) {
             if (matrix[id(x, y)] == 0) continue;
             int xx, yy;
-
-            xx = x - 1;
-            while (xx >= 0 && matrix[id(xx, y)] != 0 && id(xx, y) != T) xx--;
-            if (id(xx, y) != T) xx++;
-            if (xx != x)
-                graph[id(x, y)].push_back(id(xx, y));
-            xx = x + 1;
-            while (xx < N && matrix[id(xx, y) != 0] && id(xx, y) != T) xx++;
-            if (id(xx, y) != T) xx--;
-            if (xx != x)
-                graph[id(x, y)].push_back(id(xx, y));
-
-            yy = y - 1;
-            while (yy >= 0 && matrix[id(x, yy)] != 0 && id(x, yy) != T) yy--;
-            if (id(x, yy) != T) yy++;
-            if (yy != y)
-                graph[id(x, y)].push_back(id(x, yy));
-            yy = y + 1;
-            while (yy < M && matrix[id(x, yy)] != 0 && id(x, yy) != T) yy++;
-            if (id(x, yy) != T) yy--;
-            if (yy != y)
-                graph[id(x, y)].push_back(id(x, yy));
+            for (int k = 0; k < 4; k++) {
+                xx = x + dx[k];
+                yy = y + dy[k];
+                while (pass(xx, yy)) {
+                    xx += dx[k];
+                    yy += dy[k];
+                }
+                if (xx < 0 || yy < 0 || xx >= M || yy >= N || id(xx, yy) != T) {
+                    xx -= dx[k];
+                    yy -= dy[k];
+                }
+                if (xx != x || yy != y)
+                    graph[id(x, y)].push_back(id(xx, yy));
+            }
         }
     }
 
-    cout << "graph: " << endl;
-    for (int i = 0; i < M * N; i++) {
-        cout << i << ": ";
-        for (int j : graph[i]) {
-            cout << j << " ";
-        }
-        cout << endl;
-    }
+    // cout << S << ' ' << T << endl;
+    // cout << "graph: " << endl;
+    // for (int i = 0; i < M * N; i++) {
+    //     cout << i << ": ";
+    //     for (int j : graph[i]) {
+    //         cout << j << " ";
+    //     }
+    //     cout << endl;
+    // }
 
     vector<int> path(N * M, -1);
     path[S] = 0;
