@@ -28,7 +28,7 @@ bool accessible(int x, int y, int sta, const vector<vector<char>> &matrix, const
     if (matrix[x][y] == '#') return false;
     for (int i = 0; i < K; i++) {
         if (x == locks[i][0] && y == locks[i][1]) {
-            if (sta & int(pow(2, i)) > 0) {
+            if ((sta & int(pow(2, i))) > 0) {
                 return true;
             } else {
                 return false;
@@ -84,7 +84,6 @@ int main() {
                 int idd = encode(xx, yy, staa);
                 if (vst[idd] != -1) {
                     vst[idd] = -1;
-                    cout << idd << " " << xx << " " << yy << " " << staa << endl;
                     que.push_back(idd);
                     path[idd] = path[id] + 1;
                     if (xx == c and yy == d) {
