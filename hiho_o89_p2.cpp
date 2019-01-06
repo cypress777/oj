@@ -26,7 +26,7 @@ int main() {
     vector<int> dy{0, 1, 0, -1};
 
     int r = 0, f = que.size() - 1;
-    int max = 1;
+    int max = 0;
     while (r <= f) {
         int id = que[r];
         int x = id / N;
