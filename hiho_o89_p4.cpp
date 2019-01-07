@@ -24,14 +24,18 @@ int main() {
     for (int i = 1; i <= N; i++) {
         Noo -= i % 2;
         Nee -= (i + 1) % 2;
-        loop_len[i] = factorials[Noo] * factorials[Nee]
+        loop_len[i] = factorials[Noo] * factorials[Nee];
+        // cout << i << " " << loop_len[i] << endl;
     }
+    // cout << endl;
 
     vector<int> loop_idx(N + 1, 0);
-    int i = 0;
-    while (K > 0) {
-        loop_idx[i] = K / loop_len[i];
-        K %= loop_len[i];
+    int i = 1;
+    int kk = K - 1;
+    while (kk > 0) {
+        loop_idx[i] = kk / loop_len[i];
+        // cout << i << " " << loop_idx[i] << endl;
+        kk %= loop_len[i];
         i++;
     }
 
@@ -40,9 +44,9 @@ int main() {
     for (int i = 1; i <= N; i++) {
         int kk = 0;
         for (int j = 1; j <= N; j++) {
-            if (vst[j] == -1 && (i == 1 || (res[i - 1] + j) % 2 == 1)) {
-                vst[j] = 1;
+            if (vst[j] == -1 && ((i == 1 && (flag == 0 || j % 2 == 1)) || (res[i - 1] + j) % 2 == 1)) {
                 if (kk == loop_idx[i]) {
+                    vst[j] = 1;
                     res[i] = j;
                     break;
                 }
