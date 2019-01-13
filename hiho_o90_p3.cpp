@@ -39,7 +39,7 @@ int main() {
     }
 
     // pick[i, j] = max(A[i] + A_remain[i + 1] + B_remain[j] - pick[i + 1, j], B[j] + A_remain[i] + B_remain[j + 1] - pick[i, j + 1])
-    // since pick[i, j] is determined by past infomation in pick, so it could derived by:
+    // since pick[i, j] is determined by past infomation in pick[][], so it could derived by:
     vector<vector<int>> res_tab(N + 1, vector<int>(N + 1, 0));
     for (int i = N; i >= 0; i--) {
         for (int j = N; j >= 0; j--) {
