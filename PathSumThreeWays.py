@@ -36,7 +36,7 @@ def up(r, n):
         pi = que[n]
         pj = que[m]
 
-def delete(r, f, n):
+def pop(r, f):
     return r, f
 
 r = 0
@@ -49,7 +49,7 @@ for i in range(row):
 
 while r < len(que):
     id = que[r]
-    r, f = delete(r, f, r)
+    r, f = pop(r, f)
     
     for k in range(3):
         xx = id.x + delta_x[k]
