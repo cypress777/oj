@@ -11,7 +11,7 @@ def valid(n, k):
         return True
     return False
 
-def calc(n, p, s, d, min_f):
+def calc(n, p, s, d):
 #     print(n, p, s, d, min_f)
     if p == 1:
         if valid(n, d + s - 1):
@@ -28,16 +28,16 @@ def calc(n, p, s, d, min_f):
         if valid(n, d + s - p):
             res += 1
     
-    for i in range(min_f, int(math.sqrt(p)) + 1):
+    for i in range(int(math.sqrt(p)), 1, -1):
         if p % i == 0:
-            res += calc(n, p // i, s - i, d + 1, i)
+            res += calc(n, p // i, s - i, d + 1)
     return res
 
 found = 0
 remain = max_k - 1
 total = 0
 for n in range(4, 2 * max_k + 1):
-    found = calc(n, n, n, 1, 2)
+    found = calc(n, n, n, 1)
 #     print(n, found)
     if found > 0:
         remain -= found
