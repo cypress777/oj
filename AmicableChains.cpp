@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -8,9 +9,10 @@ vector<int> nexts;
 
 int get_next(int n) {
     if (nexts[n] != -1) return nexts[n];
-    int res = 0;
-    for (int i = 1; i < n; i++) {
-        if (n % i == 0) res += i;
+    int res = 1;
+    int sqn = int(sqrt(n));
+    for (int i = 2; i <= sqn; i++) {
+        if (n % i == 0) res += i, res += n / i;
         if (res > MM) return 10 * MM;
     }
     return res;
