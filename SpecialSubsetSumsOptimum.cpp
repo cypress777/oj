@@ -11,15 +11,10 @@ int bot_SA = 0;
 
 bool is_valid(const vector<int> &A) {
     if (A.size() < 3) return true;
-    for (int i = 0; i < A.size() - 2; i++) {
-        if (A[i] + A[i + 1] <= A[A.size() - 1]) return false;
-        if (A.size() > 5 && A[0] == 20 && A[1] == 31 && A[2] == 38 && A[3] == 39 && A[4] == 40 && A[5] == 42) cout << "1111" << endl;
-        if (A.size() > 3 && i < A.size() - 2) if (A[i] + A[i + 1] + A[i + 2] <= A[A.size() - 2] + A[A.size() - 1]) return false;
-        if (A.size() > 5 && A[0] == 20 && A[1] == 31 && A[2] == 38 && A[3] == 39 && A[4] == 40 && A[5] == 42) cout << "2222" << endl;
-        if (A.size() > 4 && i < A.size() - 3) if (A[i] + A[i + 1] + A[i + 2] + A[i + 3] <= A[A.size() - 3] + A[A.size() - 2] + A[A.size() - 1]) return false;
-        if (A.size() > 5 && A[0] == 20 && A[1] == 31 && A[2] == 38 && A[3] == 39 && A[4] == 40 && A[5] == 42) cout << "3333" << endl;
-    }
-    if (A.size() > 5 && A[0] == 20 && A[1] == 31 && A[2] == 38 && A[3] == 39 && A[4] == 40 && A[5] == 42) cout << "44444" << endl;
+    if (A[0] + A[1] <= A[A.size() - 1]) return false;
+    if (A.size() > 3) if (A[0] + A[1] + A[2] <= A[A.size() - 2] + A[A.size() - 1]) return false;
+    if (A.size() > 4) if (A[0] + A[1] + A[2] + A[3] <= A[A.size() - 3] + A[A.size() - 2] + A[A.size() - 1]) return false;
+
     return true;
 }
 
@@ -35,6 +30,9 @@ bool gen(int SA, const vector<int> &A) {
 
     if (A.size() == 7) {
         if (sum_A == SA) {
+            cout << "sa: " << SA << endl;
+            for (int n : A) cout << n << " ";
+            cout << endl;
             return true;
         }
         return false;
@@ -57,10 +55,10 @@ int main() {
     for (int n : up_A) up_SA += n;
     for (int n : pre_A) bot_SA += n;
 
-    for (int i = up_SA; i <= up_SA; i++) {
+    for (int i = bot_SA; i <= up_SA; i++) {
         vector<int> A{};
-        gen(i, A);
+        if (gen(i, A)) return 0;
     }
-
+    cout << up_SA << endl;
     return 0;
 }
