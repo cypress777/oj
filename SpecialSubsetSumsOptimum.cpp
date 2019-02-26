@@ -47,7 +47,7 @@ bool is_valid(const vector<int> &A) {
         int sj = sum_set(subs[j]);
         int szi = subs[i].size();
         int szj = subs[j].size();
-        if (szi == szj && si == sj || szi > szj && si <= szj || szi < szj && si >= szj) return false;
+        if (szi == szj && si == sj || szi > szj && si <= szj || szi < szj && szi >= szj) return false;
     }
 
     return true;
