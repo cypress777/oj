@@ -14,18 +14,19 @@ unsigned long set_bit(unsigned long num, int n) { return num |= 1UL << n; }
 unsigned long clear_bit(unsigned long num, int n) { return num &= ~(1UL << n); }
 
 void Solve() {
-    res = vector<vector<int>>(n, vector<int>(mm + 1, 0));
-    for (int i = 0; i < n; i++) res[i][0] = 0;
+    res = vector<vector<int>>(n, vector<int>(mm + 1, -1));
+    res[0][0] = 0;
     res[0][metrics[0]] = vals[0];
-    for (int i = 0; i <= mm; i++) cout << res[0][i] << " ";
-    cout << endl;
+
+//    for (int i = 0; i <= mm; i++) cout << 0 << " " << i << " " << -1 << " " << -1 << " " << res[0][i] << endl;
 
     for (int i = 1; i < n; i++) {
         for (int j = 0; j <= mm; j++) {
-            res[i][j] = max(res[i - 1][j & (~metrics[i])] + vals[i], res[i - 1][j]);
-            cout << res[i][j] << " ";
+            int add = res[i - 1][j ^ metrics[i]] == -1 ? -1 : (res[i - 1][j ^ metrics[i]] + vals[i]);
+            int noadd = res[i - 1][j];
+            res[i][j] = max(add, noadd);
+//            cout << i << " " << j << " " << add << " " << noadd << " " << res[i][j] << endl;
         }
-        cout << endl;
     }
 
     cout << res[n - 1][mm] << endl;
