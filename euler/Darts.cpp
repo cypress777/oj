@@ -7,12 +7,16 @@ int NN = 100;
 
 int main() {
     vector<int> vals = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25};
-    vector<int> dvals;
+    vector<int> ids;
     vector<int> w;
+    int id = 0;
     for (int i = 0; i <= vals.size(); i++) {
         w.push_back(vals[i]);
+        id++;
         w.push_back(vals[i] * 2);
-        if (vals[i] != 25) w.push_back(vals[i] * 3);
+        ids.push_back(id);
+        id++;
+        if (vals[i] != 25) w.push_back(vals[i] * 3), id++;
     }
 
     // f(j, i) = f(j - 1, i) + f(j, i - w[j])
