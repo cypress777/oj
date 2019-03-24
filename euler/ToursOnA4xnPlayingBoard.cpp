@@ -4,8 +4,8 @@
 using namespace std;
 
 vector<vector<long long>> T;
-//long long NN = 1000000000000L;
-long long NN = 1;
+long long NN = 1000000000000L;
+//long long NN = 10;
 long long MM = 100000000L;
 
 vector<vector<long long>> mult(const vector<vector<long long>> &a, const vector<vector<long long>> &b) {
@@ -36,7 +36,7 @@ vector<vector<long long>> quick_pow(long long p) {
     while (p > 0) {
         if (p & 1) res = mult(res, base);
         p /= 2;
-        base = mult(base, T);
+        base = mult(base, base);
     }
     return res;
 }
@@ -57,7 +57,15 @@ int main() {
     // fn = M * fn-1
     // fn = M^NN * f0
 
-    vector<vector<long long>> res = mult(quick_pow(NN), f0);
+    vector<vector<long long>> trans = quick_pow(NN);
+    vector<vector<long long>> res = mult(trans, f0);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            cout << trans[i][j] << " ";
+        }
+        cout << endl;
+    }
     for (int i = 0; i < 8; i++) cout << res[i][0] << endl;
     cout << "res: " << res[1][0] << endl;
+
 }
