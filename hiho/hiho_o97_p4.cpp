@@ -87,6 +87,11 @@ int main() {
         int r1, c1, r2, c2;
         cin >> r1 >> c1 >> r2 >> c2;
 
+        if (map[r1][c1] != map[r2][c2]) {
+            cout << -1 << endl;
+            continue;
+        }
+
         int w = abs(c2 - c1);
         int h = abs(r2 - r1);
 
@@ -96,14 +101,18 @@ int main() {
         }
 
         if (r1 != r2 && c1 != c2) {
-            if (c2 > c1 && r2 > r1 && (left_sum[r1][c2] >= w - 1 && down_sum[r1][c2] >= h - 1 ||
-                                       right_sum[r2][c1] >= w - 1 && up_sum[r2][c1] >= h - 1) ||
-                c2 > c1 && r1 > r2 && (right_sum[r2][c1] >= w - 1 && down_sum[r2][c1] >= h - 1 ||
-                                       left_sum[r1][c2] >= w - 1 && up_sum[r1][c2] >= h - 1) ||
-                c1 > c2 && r2 > r1 && (right_sum[r1][c2] >= w - 1 && down_sum[r1][c2] >= h - 1 ||
-                                       left_sum[r2][c1] >= w - 1 && up_sum[r2][c1] >= h - 1) ||
-                c1 > c2 && r1 > r2 && (left_sum[r2][c1] >= w - 1 && down_sum[r2][c1] >= h - 1 ||
-                                       right_sum[r1][c2] >= w - 1 && up_sum[r1][c2] >= h - 1)) {
+            if (c2 > c1 && r2 > r1 &&
+                (map[r1][c2] == map[r1][c1] && left_sum[r1][c2] >= w - 1 && down_sum[r1][c2] >= h - 1 ||
+                 map[r2][c1] == map[r1][c1] && right_sum[r2][c1] >= w - 1 && up_sum[r2][c1] >= h - 1) ||
+                c2 > c1 && r1 > r2 &&
+                (map[r2][c1] == map[r1][c1] && right_sum[r2][c1] >= w - 1 && down_sum[r2][c1] >= h - 1 ||
+                 map[r1][c2] == map[r1][c1] && left_sum[r1][c2] >= w - 1 && up_sum[r1][c2] >= h - 1) ||
+                c1 > c2 && r2 > r1 &&
+                (map[r1][c2] == map[r1][c1] && right_sum[r1][c2] >= w - 1 && down_sum[r1][c2] >= h - 1 ||
+                 map[r2][c1] == map[r1][c1] && left_sum[r2][c1] >= w - 1 && up_sum[r2][c1] >= h - 1) ||
+                c1 > c2 && r1 > r2 &&
+                (map[r2][c1] == map[r1][c1] && left_sum[r2][c1] >= w - 1 && down_sum[r2][c1] >= h - 1 ||
+                 map[r1][c2] == map[r1][c1] && right_sum[r1][c2] >= w - 1 && up_sum[r1][c2] >= h - 1)) {
                 cout << 1 << endl;
                 continue;
             }
