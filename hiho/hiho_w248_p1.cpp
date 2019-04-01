@@ -21,14 +21,21 @@ int get_dist(int m, int n) {
         n = child[n];
         d2n++;
     }
-    return leaves_dist[m][n] - d2m - d2n;
+
+    int im, in;
+    for (int i = 0; i < leaves.size(); i++) {
+        if (m == leaves[i]) im = i;
+        if (n == leaves[i]) in = i;
+    }
+
+    return leaves_dist[im][in] - d2m - d2n;
 }
 
 int get_next_p(int layer, int cur_p) {
     for (int i = cur_p + 1; i < nodes[layer].size(); i++) {
         bool avail = true;
         for (int l : leaves) {
-            if (l = nodes[layer][i]) {
+            if (l == nodes[layer][i]) {
                 avail = false;
                 break;
             }
@@ -51,6 +58,7 @@ int main() {
     for (int i = 0; i < M; i++) cin >> layer_size[i];
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < layer_size[i]; j++) {
+            int n;
             cin >> n;
             nodes[i].push_back(n);
         }
@@ -64,16 +72,17 @@ int main() {
         }
     }
 
-    for (int i = M - 1; i > 0; i++) {
-        int cur_p = -1, last_p = -1;
-        for (int j = 1; j < nodes[i].size(); j++) {
-            if (cur_p == -1 || get_dist(nodes[i][j], nodes[i][j - 1]) != 2) {
-                last_p = cur_p;
+    for (int i = M - 1; i > 0; i--) {
+        int cur_p = -1;
+        for (int j = 0; j < nodes[i].size(); j++) {
+            if (j == 0 || get_dist(nodes[i][j], nodes[i][j - 1]) != 2) {
                 cur_p = get_next_p(i - 1, cur_p);
-                parent[nodes[i][j]] = cur_p;
-                child[cur_p] = nodes[i][j];
+                parent[nodes[i][j]] = nodes[i - 1][cur_p];
+                child[nodes[i - 1][cur_p]] = nodes[i][j];
+//                cout << "11111 " << i << " " << j << " " << nodes[i][j] << " " << cur_p << endl;
             } else {
-                parent[nodes[i][j]] = cur_p;
+                parent[nodes[i][j]] = nodes[i - 1][cur_p];
+//                cout << "22222 " << i << " " << j << " " << nodes[i][j] << " " << cur_p << endl;
             }
         }
     }
