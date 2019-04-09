@@ -60,7 +60,7 @@ bool operator<(const Number &a, const Number &b) {
 set<Number> get_result(const vector<int> &array) {
     set<Number> results;
     if (array.size() == 1) {
-        results.insert(array[0]);
+        results.insert(Number((long long)array[0], 1l));
         return results;
     }
     long long num = 0;
