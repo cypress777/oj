@@ -59,6 +59,10 @@ bool operator<(const Number &a, const Number &b) {
 
 set<Number> get_result(const vector<int> &array) {
     set<Number> results;
+    if (array.size() == 1) {
+        results.insert(array[0]);
+        return results;
+    }
     long long num = 0;
     for (int i = 0; i < array.size(); i++) num = num * 10 + array[i];
     results.insert(Number(num, 1l));
@@ -88,6 +92,8 @@ set<Number> get_result(const vector<int> &array) {
             }
         }
     }
+
+    return results;
 }
 
 int main() {
