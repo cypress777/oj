@@ -25,11 +25,11 @@ struct Number {
     }
 
     Number operator+(const Number &other) {
-        return Number(this->n_ * other.d_ + this->n_ * other.d_, this->d_ * other.d_);
+        return Number(this->n_ * other.d_ + other.n_ * this->d_, this->d_ * other.d_);
     }
 
     Number operator-(const Number &other) {
-        return Number(this->n_ * other.d_ - this->n_ * other.d_, this->d_ * other.d_);
+        return Number(this->n_ * other.d_ - other.n_ * this->d_, this->d_ * other.d_);
     }
 
     Number operator*(const Number &other) {
@@ -67,20 +67,15 @@ set<Number> get_result(const vector<int> &array) {
     for (int i = 0; i < array.size(); i++) num = num * 10 + array[i];
     results.insert(Number(num, 1l));
 
-    for (int i = 0; i < array.size() - 2; i++) {
-        cout << " ------------" << endl;
+    for (int i = 0; i < array.size() - 1; i++) {
         vector<int> arr_a;
-        for (int j = 0; j <= i; j++) cout << array[j] << " ";
-        cout << endl;
 
         for (int j = 0; j <= i; j++) arr_a.push_back(array[j]);
         auto res_a = get_result(arr_a);
 
         vector<int> arr_b;
-        for (int j = i + 1; j < array.size() - 1; j++) cout << array[j] << " ";
-        cout << endl;
 
-        for (int j = i + 1; j < array.size() - 1; j++) arr_b.push_back(array[j]);
+        for (int j = i + 1; j < array.size(); j++) arr_b.push_back(array[j]);
         auto res_b = get_result(arr_b);
 
         for (Number a : res_a) {
