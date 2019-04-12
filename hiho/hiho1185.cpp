@@ -4,9 +4,11 @@
 using namespace std;
 
 int N, M;
-vector<int> W;
+vector<long long> W;
 vector<vector<int>> G;
 vector<vector<int>> G_r;
+vector<vector<int>> CC;
+vector<int> CC_id;
 vector<int> flg;
 vector<int> post_order;
 
@@ -43,37 +45,18 @@ long long dfs_by_order(int start, vector<int> &grp) {
     return val;
 }
 
-bool not_cc(int p, int q) {
-    bool p2q = false, q2p = false;
-    for (int id : G[p]) {
-        if (id == q) {
-            p2q = true;
-            break;
-        }
-    }
-
-    for (int id : G[q]) {
-        if (id == p) {
-            q2p = true;
-            break;
-        }
-    }
-
-    if (p2q && q2p) return false;
-    else return true;
-}
-
 long long dfs_get_max(int start) {
     long long val = W[start];
+    for (int id : CC[CC_id[start]]) {
+        flg[id] = 1;
+    }
 
     long long increase = 0;
     for (int id : G[start]) {
         if (flg[id] == -1) {
             flg[id] = 1;
-            if (not_cc(id, start)) {
-                long long tmp = dfs_get_max(id);
-                if (tmp > increase) increase = tmp;
-            }
+            long long tmp = dfs_get_max(id);
+            if (tmp > increase) increase = tmp;
         }
     }
 
@@ -82,7 +65,8 @@ long long dfs_get_max(int start) {
 
 int main() {
     cin >> N >> M;
-    W = vector<int>(N + 1, 0);
+    W = vector<long long>(N + 1, 0);
+    CC_id = vector<int>(N + 1, -1);
     G = vector<vector<int>>(N + 1, vector<int>());
     G_r = vector<vector<int>>(N + 1, vector<int>());
 
@@ -100,21 +84,8 @@ int main() {
             dfs_get_post(i);
         }
     }
-//    for (int p : post_order) cout << p << " ";
-//    cout << endl;
-//    cout << "--------" << endl;
 
     reverse_graph();
-//    for (int i = 1; i <= N; i++) {
-//        for (int p : G[i]) cout << p << " ";
-//        cout << endl;
-//    }
-//    cout << "--------" << endl;
-//
-//    for (int i = 1; i <= N; i++) {
-//        for (int p : G_r[i]) cout << p << " ";
-//        cout << endl;
-//    }
 
     flg = vector<int>(N + 1, -1);
     for (int i = 0; i < post_order.size(); i++) {
@@ -123,11 +94,11 @@ int main() {
             flg[id] = 1;
             vector<int> cc;
             long long cc_val = dfs_by_order(id, cc);
-            for (int cc_id : cc) {
-                cout << cc_id << " ";
-                W[cc_id] = cc_val;
+            CC.push_back(cc);
+            for (int cci : cc) {
+                W[cci] = cc_val;
+                CC_id[cci] = (CC.size() - 1);
             }
-            cout << endl;
         }
     }
 
