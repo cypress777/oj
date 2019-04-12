@@ -8,6 +8,7 @@ vector<long long> W;
 vector<vector<int>> G;
 vector<vector<int>> G_r;
 vector<vector<int>> CC;
+vector<long long> CC_val;
 vector<int> CC_id;
 vector<int> flg;
 vector<int> post_order;
@@ -46,7 +47,7 @@ long long dfs_by_order(int start, vector<int> &grp) {
 }
 
 long long dfs_get_max(int start) {
-    long long val = W[start];
+    long long val = CC_val[CC_id[start]];
     for (int id : CC[CC_id[start]]) {
         flg[id] = 1;
     }
@@ -54,7 +55,6 @@ long long dfs_get_max(int start) {
     long long increase = 0;
     for (int id : G[start]) {
         if (flg[id] == -1) {
-            flg[id] = 1;
             long long tmp = dfs_get_max(id);
             if (tmp > increase) increase = tmp;
         }
@@ -95,10 +95,8 @@ int main() {
             vector<int> cc;
             long long cc_val = dfs_by_order(id, cc);
             CC.push_back(cc);
-            for (int cci : cc) {
-                W[cci] = cc_val;
-                CC_id[cci] = (CC.size() - 1);
-            }
+            CC_val.push_back(cc_val);
+            for (int cci : cc) CC_id[cci] = (CC.size() - 1);
         }
     }
 
