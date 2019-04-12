@@ -31,36 +31,31 @@ void reverse_graph() {
     }
 }
 
-long long dfs_by_order(int start, vector<int> &grp) {
-    long long val = W[start];
+void dfs_by_order(int start, vector<int> &grp) {
     grp.push_back(start);
-
     for (int id : G_r[start]) {
         if (flg[id] == -1) {
             flg[id] = 1;
-            val += W[id];
             dfs_by_order(id, grp);
         }
     }
-
-    return val;
 }
 
 long long dfs_get_max(int start) {
     long long val = CC_val[CC_id[start]];
-    for (int id : CC[CC_id[start]]) {
-        flg[id] = 1;
-    }
 
-    long long increase = 0;
-    for (int id : G[start]) {
-        if (flg[id] == -1) {
-            long long tmp = dfs_get_max(id);
-            if (tmp > increase) increase = tmp;
+    long long more = 0;
+    for (int cci : CC[CC_id[start]]) {
+        for (int i : G[cci]) {
+            if (CC_id[i] != CC_id[start]) {
+                long long tmp = dfs_get_max(i);
+                if (tmp > more) more = tmp;
+            }
         }
     }
 
-    return val += increase;
+    val += more;
+    return val;
 }
 
 int main() {
@@ -92,16 +87,23 @@ int main() {
         int id = post_order[post_order.size() - 1 - i];
         if (flg[id] == -1) {
             flg[id] = 1;
+
             vector<int> cc;
-            long long cc_val = dfs_by_order(id, cc);
+            dfs_by_order(id, cc);
             CC.push_back(cc);
+
+            long long cc_val = 0;
+            for (int cci : cc) {
+                cc_val += W[cci];
+                CC_id[cci] = (CC.size() - 1);
+            }
+
             CC_val.push_back(cc_val);
-            for (int cci : cc) CC_id[cci] = (CC.size() - 1);
+//            for (int cci : cc) cout << cci << " ";
+//            cout << " cc val: " << cc_val << endl;
         }
     }
 
-    flg = vector<int>(N + 1, -1);
-    flg[1] = 1;
     long long res = dfs_get_max(1);
 
     cout << res << endl;
