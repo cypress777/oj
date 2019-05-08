@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <stdio.h>
 
 using namespace std;
 
@@ -34,13 +35,30 @@ void decode(int code, vector<int> &map) {
     }
 }
 
+void show_code(int code) {
+    vector<int> map;
+    decode(code, map);
+    cout << "----------------------" << endl;
+    cout << "code: " << code << endl;
+    cout << "buff: " << int(code >> 20) << endl;
+    cout << "map: " << endl;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            cout << map[i * M + j] << " ";
+        }
+        cout << endl;
+    }
+}
+
 int get_buff(int code) {
     return int(code >> 20);
 };
 
 struct State {
     explicit State() {};
+
     State(int code, int hp) : code_(code), hp_(hp) {}
+
     int code_;
     int hp_;
 };
@@ -115,6 +133,54 @@ struct PQue {
     int r_, f_;
 };
 
+bool has_adj(State state, int id) {
+    vector<int> di = {0, 1, 0, -1};
+    vector<int> dj = {1, 0, -1, 0};
+
+    int i = id / M;
+    int j = id % M;
+
+    bool has_adj = false;
+    for (int k = 0; k < 4; k++) {
+        int ii = i + di[k];
+        int jj = j + dj[k];
+        int nid = ii * M + jj;
+        if (state.code_ & (1 << nid)) {
+            has_adj = true;
+            break;
+        }
+    }
+    return has_adj;
+}
+
+State get_next_state(int new_id, State old_state) {
+    vector<int> new_map;
+    decode(old_state.code_, new_map);
+    new_map[new_id] = 1;
+    int new_buff = get_buff(old_state.code_) - 1;
+    int new_hp = old_state.hp_;
+
+    int monster_hp = h_map[new_id];
+    int monster_ap = a_map[new_id];
+
+    while (monster_hp > 0) {
+        monster_hp -= AP;
+        if (new_buff >= 0) {
+            new_buff--;
+        } else {
+            new_hp -= monster_ap;
+        }
+    }
+
+    if (new_buff < 0) new_buff = 0;
+    if ((1 << new_id) & special_monsters_code) new_buff = 5;
+
+    int new_code = encode(new_map, new_buff);
+
+    State new_state(new_code, new_hp);
+    return new_state;
+}
+
 int main() {
     cin >> N >> M;
 
@@ -145,7 +211,7 @@ int main() {
     total_h = 0;
     int id = 0;
     while (id < N * M) {
-        if (!monsters_code & (1 << id)) {
+        if (!(monsters_code & (1 << id))) {
             id++;
             continue;
         }
@@ -164,55 +230,42 @@ int main() {
     PQue pque;
     pque.update(State(start_code, HP));
 
-    vector<int> di = {0, 1, 0, -1};
-    vector<int> dj = {1, 0, -1, 0};
     while (!pque.empty()) {
         State state = pque.pop();
-        if ((!state.code_ & monsters_code) == 0) {
-            cout << state.hp_ << endl;
+
+        if ((~state.code_ & monsters_code) == 0) {
+            cout << "             Result:" << endl;
+            show_code(state.code_);
+            cout << "hp: " << state.hp_ << endl;
             return 0;
         }
+
         vector<int> map;
         decode(state.code_, map);
+        int buff = get_buff(state.code_);
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 int new_id = i * M + j;
+                if ((state.code_ & (1 << new_id)) || !has_adj(state, new_id)) continue;
 
-                if (map[new_id] == 1) continue;
+                State new_state = get_next_state(new_id, state);
+                if (new_state.hp_ < 0) continue;
 
-                bool has_adj = false;
-                for (int k = 0; k < 4; k++) {
-                    int ii = i + di[k];
-                    int jj = j + dj[k];
-                    if (map[ii * M + jj] == 1) {
-                        has_adj = true;
-                        break;
-                    }
-                }
-                if (!has_adj) continue;
-
-                vector<int> new_map = map;
-                new_map[new_id] = 1;
-                int new_buff = get_buff(state.code_);
-                int new_hp = state.hp_;
-                int monster_hp = h_map[new_id];
-                int monster_ap = a_map[new_id];
-                while (monster_hp > 0) {
-                    monster_hp -= AP;
-                    if (new_buff > 0) {
-                        new_buff--;
-                    } else {
-                        new_hp -= monster_ap;
-                    }
-                }
-                if ((1 << new_id) & special_monsters_code) new_buff = 5;
-
-                if (new_hp < 0) continue;
-
-                int new_code = encode(new_map, new_buff);
-                State new_state(new_code, new_hp);
                 pque.update(new_state);
+
+                for (int ii = 0; ii < N; ii++) {
+                    for (int jj = 0; jj < M; jj++) {
+                        int next_id = ii * M + jj;
+                        if ((new_state.code_ & (1 << next_id)) || !has_adj(new_state, next_id)) continue;
+
+                        State next_state = get_next_state(next_id, new_state);
+                        if (pque.index_.find(next_state.code_) != pque.index_.end() &&
+                            pque.heap_[pque.index_[next_state.code_]].hp_ < next_state.hp_) {
+                            pque.update(next_state);
+                        }
+                    }
+                }
             }
         }
     }
