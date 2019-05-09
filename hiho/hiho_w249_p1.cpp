@@ -55,7 +55,7 @@ int get_buff(int code) {
 };
 
 struct State {
-    explicit State() {};
+    explicit State() : code_(0), hp_(-1) {};
 
     State(int code, int hp) : code_(code), hp_(hp) {}
 
@@ -80,8 +80,11 @@ struct PQue {
     void update(State state) {
         if (index_.find(state.code_) == index_.end()) {
             r_++;
-            if (heap_.size() > r_) heap_[r_] = state;
-            else heap_.push_back(state);
+            if (heap_.size() > r_) {
+                heap_[r_] = state;
+            } else {
+                heap_.push_back(state);
+            }
             index_[state.code_] = r_;
             up(r_);
         } else {
@@ -144,6 +147,7 @@ bool has_adj(State state, int id) {
     for (int k = 0; k < 4; k++) {
         int ii = i + di[k];
         int jj = j + dj[k];
+        if (ii < 0 || ii >= N || jj < 0 || jj >= M) continue;
         int nid = ii * M + jj;
         if (state.code_ & (1 << nid)) {
             has_adj = true;
@@ -230,6 +234,8 @@ int main() {
     PQue pque;
     pque.update(State(start_code, HP));
 
+    State max_state(0, -1);
+
     while (!pque.empty()) {
         State state = pque.pop();
 
@@ -237,12 +243,8 @@ int main() {
             cout << "             Result:" << endl;
             show_code(state.code_);
             cout << "hp: " << state.hp_ << endl;
-            return 0;
+            if (state.hp_ > max_state.hp_) max_state = state;
         }
-
-        vector<int> map;
-        decode(state.code_, map);
-        int buff = get_buff(state.code_);
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
@@ -260,14 +262,20 @@ int main() {
                         if ((new_state.code_ & (1 << next_id)) || !has_adj(new_state, next_id)) continue;
 
                         State next_state = get_next_state(next_id, new_state);
-                        if (pque.index_.find(next_state.code_) != pque.index_.end() &&
-                            pque.heap_[pque.index_[next_state.code_]].hp_ < next_state.hp_) {
+                        if (pque.index_.find(next_state.code_) != pque.index_.end()) {
                             pque.update(next_state);
                         }
                     }
                 }
             }
         }
+    }
+
+    if (max_state.hp_ <= 0) {
+        cout << "DEAD" << endl;
+    } else {
+        show_code(max_state.code_);
+        cout << max_state.hp_ << endl;
     }
 
     return 0;
