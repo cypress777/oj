@@ -12,6 +12,7 @@ vector<int> h_map;
 vector<int> a_map;
 int monsters_code;
 int special_monsters_code;
+int ans = -1;
 
 int encode(const vector<int> &map, int buff) {
     int code = 0;
@@ -63,6 +64,11 @@ struct State {
     int hp_;
 };
 
+void show_state(State state) {
+    show_code(state.code_);
+    cout << "hp: " << state.hp_ << endl;
+}
+
 struct PQue {
     explicit PQue() : r_(0), f_(1) {
         heap_ = vector<State>(1, State());
@@ -70,6 +76,7 @@ struct PQue {
 
     State pop() {
         State state = heap_[f_];
+        index_[state.code_] = -1;
         heap_[f_] = heap_[r_];
         r_--;
         index_[heap_[f_].code_] = f_;
@@ -78,7 +85,7 @@ struct PQue {
     }
 
     void update(State state) {
-        if (index_.find(state.code_) == index_.end()) {
+        if (index_.find(state.code_) == index_.end() || index_[state.code_] == -1) {
             r_++;
             if (heap_.size() > r_) {
                 heap_[r_] = state;
@@ -113,7 +120,7 @@ struct PQue {
         while (id < r_) {
             int new_id = id;
             if (id * 2 <= r_ && heap_[new_id].hp_ < heap_[id * 2].hp_) new_id = id * 2;
-            if (id * 2 + 1 <= r_ && heap_[new_id].hp_ < heap_[id * 2].hp_) new_id = id * 2 + 1;
+            if (id * 2 + 1 <= r_ && heap_[new_id].hp_ < heap_[id * 2 + 1].hp_) new_id = id * 2 + 1;
             if (new_id == id) break;
 
             State tmp;
@@ -161,7 +168,7 @@ State get_next_state(int new_id, State old_state) {
     vector<int> new_map;
     decode(old_state.code_, new_map);
     new_map[new_id] = 1;
-    int new_buff = get_buff(old_state.code_) - 1;
+    int new_buff = max(0, get_buff(old_state.code_) - 1);
     int new_hp = old_state.hp_;
 
     int monster_hp = h_map[new_id];
@@ -169,20 +176,27 @@ State get_next_state(int new_id, State old_state) {
 
     while (monster_hp > 0) {
         monster_hp -= AP;
-        if (new_buff >= 0) {
+        if (new_buff > 0) {
             new_buff--;
         } else {
             new_hp -= monster_ap;
         }
     }
 
-    if (new_buff < 0) new_buff = 0;
     if ((1 << new_id) & special_monsters_code) new_buff = 5;
 
     int new_code = encode(new_map, new_buff);
 
     State new_state(new_code, new_hp);
     return new_state;
+}
+
+bool has_same_map(int a, int b) {
+    int t = ~(~a ^ b);
+    for (int i = 0; i < 20; i++) {
+        if ((t & (1 << i))) return false;
+    }
+    return true;
 }
 
 int main() {
@@ -209,6 +223,7 @@ int main() {
             }
         }
     }
+
     start_code |= (5 << 20);
 
     total_a = 0;
@@ -240,12 +255,9 @@ int main() {
         State state = pque.pop();
 
         if ((~state.code_ & monsters_code) == 0) {
-            cout << "             Result:" << endl;
-            show_code(state.code_);
-            cout << "hp: " << state.hp_ << endl;
             if (state.hp_ > max_state.hp_) max_state = state;
+            continue;
         }
-
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 int new_id = i * M + j;
@@ -253,20 +265,11 @@ int main() {
 
                 State new_state = get_next_state(new_id, state);
                 if (new_state.hp_ < 0) continue;
+                if (pque.index_.find(new_state.code_) != pque.index_.end() &&
+                    pque.index_[new_state.code_] == -1)
+                    continue;
 
                 pque.update(new_state);
-
-                for (int ii = 0; ii < N; ii++) {
-                    for (int jj = 0; jj < M; jj++) {
-                        int next_id = ii * M + jj;
-                        if ((new_state.code_ & (1 << next_id)) || !has_adj(new_state, next_id)) continue;
-
-                        State next_state = get_next_state(next_id, new_state);
-                        if (pque.index_.find(next_state.code_) != pque.index_.end()) {
-                            pque.update(next_state);
-                        }
-                    }
-                }
             }
         }
     }
@@ -274,7 +277,8 @@ int main() {
     if (max_state.hp_ <= 0) {
         cout << "DEAD" << endl;
     } else {
-        show_code(max_state.code_);
+//        cout << "         Final result: " << endl;
+//        show_state(max_state);
         cout << max_state.hp_ << endl;
     }
 
