@@ -256,7 +256,7 @@ int main() {
 
         if ((~state.code_ & monsters_code) == 0) {
             if (state.hp_ > max_state.hp_) max_state = state;
-            continue;
+            break;
         }
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
