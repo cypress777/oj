@@ -7,7 +7,7 @@ vector<int> ori;
 vector<int> r_sockets;
 vector<int> l_sockets;
 int MM = 1000000007;
-
+vector<vector<int>> cal_map;
 void r2l() {
     int val = 0;
     int last_r_cnt = 0;
@@ -42,17 +42,38 @@ void l2r() {
     }
 }
 
+int fast_pow(int base, int pow) {
+
+}
+
+int permutation(int obj) {
+
+}
+
+int cal(int slot, int obj) {
+    return fast_pow(slot, obj) / permutation(obj) % MM;
+}
+
 int solve(vector<int> socket) {
-    int miss = socket.size();
-    vector<vector<int>> res(socket.size(), vector<int>(miss + 1, 0));
-    for (int i = ; i <= cnt; i++) res[0][i] = 1;
-    for (int i = 1; i < socket.size(); i++) {
-        for (int j = 0; j <= cnt; j++) {
-            for (int k = 0; k <= socket[i]; k++) {
-                res[i][j] += res[i - 1][j - k];
+    int cnt = socket.size();
+
+    vector<vector<int>> res(cnt, vector<int>(cnt + 1, 0));
+
+    res[0][1] = cal_map[socket[cnt - 1]][1];
+    res[0][0] = 1;
+
+    for (int i = 1; i < cnt; i++) {
+        int limit = i + 1;
+        for (int j = 0; j <= limit; j++) {
+            for (int k = 0; k <= j ; k++) {
+                if (j - k > limit - 1) continue;
+                res[i][j] += res[i - 1][j - k] * cal_map[socket[cnt - 1 - i]][k] % MM;
+                res[i][j] %= MM;
             }
         }
     }
+
+    return res[cnt - 1][cnt];
 }
 
 int main() {
@@ -60,6 +81,13 @@ int main() {
     while (cin >> ch) {
         if (ch == '(') ori.push_back(1);
         else if (ch == ')') ori.push_back(-1);
+    }
+
+    cal_map = vector<vector<int>>(ori.size(), vector<int>(ori.size()));
+    for (int i = 0; i < ori.size(); i++) {
+        for (int j = 0; j < ori.size(); j++) {
+            cal_map[i][j] = cal(i, j);
+        }
     }
 
     r2l();
