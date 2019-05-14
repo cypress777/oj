@@ -6,14 +6,13 @@ using namespace std;
 vector<int> ori;
 vector<int> r_sockets;
 vector<int> l_sockets;
-int MM = 1000000007;
-vector<vector<int>> cal_map;
+long long MM = 1000000007;
 
 void r2l() {
     int val = 0;
     int r_cnt = 0;
 
-    for (int i = ori.size() - 1; i >= 0; i++) {
+    for (int i = ori.size() - 1; i >= 0; i--) {
         val += ori[i];
         if (ori[i] == 1) {
             if (val > 0) {
@@ -23,6 +22,9 @@ void r2l() {
             r_sockets.push_back(r_cnt);
         }
     }
+//    cout << "------- r: " << endl;
+//    for (auto r : r_sockets) cout << r << " ";
+//    cout << endl;
 }
 
 void l2r() {
@@ -39,40 +41,31 @@ void l2r() {
             l_sockets.push_back(l_cnt);
         }
     }
+//    cout << "------- l: " << endl;
+//    for (auto l : l_sockets) cout << l << " ";
+//    cout << endl;
 }
 
-int fast_pow(int base, int pow) {
+long long solve(vector<int> socket) {
+    if (socket.empty()) return 1;
+    int cnt = socket[socket.size() - 1];
 
-}
+    vector<vector<long long>> res(socket.size(), vector<long long>(cnt + 1, 0));
 
-int permutation(int obj) {
+    for (int i = socket[0]; i <= cnt; i++) res[0][i] = 1;
 
-}
 
-int cal(int slot, int obj) {
-    return fast_pow(slot, obj) / permutation(obj) % MM;
-}
 
-int solve(vector<int> socket) {
-    int cnt = socket.size();
-
-    vector<vector<int>> res(cnt, vector<int>(cnt + 1, 0));
-
-    for (int i = 1; i < cnt; i++) res[0][i] = cal_map[socket[0]][i];
-
-    //  res[i][j] put j para before i
-    for (int i = 1; i < cnt; i++) {
-        int min_limit = i + 1;
-        for (int j = min_limit; j <= cnt; j++) {l_sockets
-            int last_min_limit = i;
-            for (int k = last_min_limit; k <= j; k++) {
-                res[i][j] += res[i - 1][k] * cal_map[socket[i]][j - k] % MM;
+    for (int i = 1; i < socket.size(); i++) {
+        for (int j = socket[i]; j <= cnt; j++) {
+            for (int k = socket[i - 1]; k <= j; k++) {
+                res[i][j] += res[i - 1][k];
                 res[i][j] %= MM;
             }
         }
     }
 
-    return res[cnt - 1][cnt];
+    return res[socket.size() - 1][cnt];
 }
 
 int main() {
@@ -81,23 +74,25 @@ int main() {
         if (ch == '(') ori.push_back(1);
         else if (ch == ')') ori.push_back(-1);
     }
-
-    cal_map = vector<vector<int>>(ori.size(), vector<int>(ori.size()));
-    for (int i = 0; i < ori.size(); i++) {
-        for (int j = 0; j < ori.size(); j++) {
-            cal_map[i][j] = cal(i, j);
-        }
-    }
+//
+//    cout << "------- ori: " << endl;
+//    for (auto o : ori) cout << o << " ";
+//    cout << endl;
 
     r2l();
 
     l2r();
 
-    int r_way = solve(r_sockets);
+    int r_cnt = 0, l_cnt = 0;
+    long long r_way = 1, l_way = 1;
 
-    int l_way = solve(l_sockets);
+    r_way = solve(r_sockets);
+    if (!r_sockets.empty()) r_cnt = r_sockets[r_sockets.size() - 1];
 
-    cout << r_way * l_way % MM << endl;
+    l_way = solve(l_sockets);
+    if (!l_sockets.empty()) l_cnt = l_sockets[l_sockets.size() - 1];
+
+    cout << (r_cnt + l_cnt) % MM << " " << r_way * l_way % MM << endl;
 
     return 0;
 }
