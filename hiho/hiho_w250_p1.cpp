@@ -57,11 +57,13 @@ long long solve(vector<int> socket) {
 
 
     for (int i = 1; i < socket.size(); i++) {
-        for (int j = socket[i]; j <= cnt; j++) {
-            for (int k = socket[i - 1]; k <= j; k++) {
-                res[i][j] += res[i - 1][k];
-                res[i][j] %= MM;
-            }
+        for (int k = socket[i - 1]; k <= socket[i]; k++) {
+            res[i][socket[i]] += res[i - 1][k];
+            res[i][socket[i]] %= MM;
+        }
+        for (int j = socket[i] + 1; j <= cnt; j++) {
+            res[i][j] = res[i][j - 1] + res[i - 1][j];
+            res[i][j] %= MM;
         }
     }
 
