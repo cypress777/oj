@@ -24,8 +24,9 @@ void gen_prime_tab(T n, std::vector<T> &prime_tab) {
 
 template <typename T>
 bool isPrime(T n, const std::vector<T> &prime_tab) {
+    if (n == 1) return false;
     for (T p : prime_tab) {
-        if (n % p == 0) return false;
         if (p * p > n) return true;
+        if (n % p == 0) return false;
     }
 }
