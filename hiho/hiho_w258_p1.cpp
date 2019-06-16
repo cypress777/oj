@@ -41,7 +41,7 @@ int main() {
         int id = que[cur];
         cur++;
 
-
+        cal()
     }
 
     return 0;
