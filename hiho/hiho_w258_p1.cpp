@@ -3,7 +3,8 @@
 
 using namespace std;
 
-vector<int> f, in, ip, c, flg, cost, uk_ch_cnt;
+vector<int> f, in, ip, c, flg, uk_ch_cnt;
+vector<long long>  cost;
 vector<vector<int>> ch;
 int boss;
 
@@ -11,7 +12,7 @@ void cal(int id) {
     int tot = 0;
     for (int i = 0; i < ch[id].size(); i++) tot += ip[ch[id][i]];
 
-    vector<int> res(tot + 1, -1);
+    vector<long long> res(tot + 1, -1);
 
     res[0] = 0;
 
@@ -20,7 +21,7 @@ void cal(int id) {
 
         for (int j = tot; j >= 1; j--) {
             if (j - ip[ch_id] >= 0 && res[j - ip[ch_id]] != -1 && cost[ch_id] != -1) {
-                int use_new = res[j - ip[ch_id]] + cost[ch_id];
+                long long use_new = res[j - ip[ch_id]] + cost[ch_id];
 
                 if (res[j] == -1) {
                     res[j] = use_new;
@@ -31,7 +32,7 @@ void cal(int id) {
         }
     }
 
-    int min_res = -1;
+    long long min_res = -1;
     for (int i = in[id]; i <= tot; i++) {
         if (min_res == -1) {
             min_res = res[i];
@@ -56,7 +57,7 @@ int main() {
     flg = vector<int>(N + 1, -1);
     uk_ch_cnt = vector<int>(N + 1, 0);
 
-    cost = vector<int>(N + 1, -1);
+    cost = vector<long long>(N + 1, -1);
 
     for (int i = 1; i <= N; i++) {
         cin >> f[i] >> in[i] >> ip[i] >> c[i];
