@@ -81,6 +81,11 @@ int main() {
         }
     }
 
+    if (flg[boss] != -1) {
+        cout << cost[boss] << endl;
+        return 0;
+    }
+
     while (que.size() > cur) {
         int id = que[cur];
         cur++;
@@ -97,15 +102,14 @@ int main() {
         flg[id] = 1;
 
         if (id == boss) {
-            cout << cost[id] << endl;
-            return 0;
+            break;
         }
 
         uk_ch_cnt[f[id]]--;
         if (uk_ch_cnt[f[id]] == 0) que.push_back(f[id]);
     }
 
-    cout << -1 << endl;
+    cout << cost[boss] << endl;
 
     return 0;
 }
