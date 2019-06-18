@@ -18,12 +18,12 @@ int main() {
         }
     }
 
-    flg = vector<vector<int>>(n * n, vector<int>(11, -1));
+    flg = vector<vector<int>>(n, vector<int>(n, -1));
     vector<int> que;
     vector<int> remain;
     vector<int> step;
 
-    flg[0][k] = 1;
+    flg[0][0] = k;
     que.push_back(0);
     remain.push_back(k);
     step.push_back(0);
@@ -52,8 +52,8 @@ int main() {
             if (map[xx][yy] == '#') rr -= 1;
             if (rr < 0) continue;
 
-            if (flg[pp][rr] != -1) continue;
-            flg[pp][rr] = 1;
+            if (flg[xx][yy] != -1 && flg[xx][yy] >= rr) continue;
+            flg[xx][yy] = rr;
 
             if (xx == n - 1 && yy == n - 1) {
                 cout << st + 1 << endl;
