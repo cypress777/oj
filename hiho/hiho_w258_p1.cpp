@@ -18,9 +18,10 @@ void cal(int id) {
 
     for (int i = 0; i < ch[id].size(); i++) {
         int ch_id = ch[id][i];
+        if (cost[ch_id] == -1) continue;
 
         for (int j = tot; j >= 1; j--) {
-            if (j - ip[ch_id] >= 0 && res[j - ip[ch_id]] != -1 && cost[ch_id] != -1) {
+            if (j - ip[ch_id] >= 0 && res[j - ip[ch_id]] != -1) {
                 long long use_new = res[j - ip[ch_id]] + cost[ch_id];
 
                 if (res[j] == -1) {
@@ -49,7 +50,7 @@ int main() {
     cin >> N;
 
     f = vector<int>(N + 1);
-    in = vector<int>(N  + 1);
+    in = vector<int>(N + 1);
     ip = vector<int>(N + 1);
     c = vector<int>(N + 1);
     ch = vector<vector<int>>(N + 1, vector<int>());
