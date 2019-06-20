@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cmath>
-#include <unordered_map>
 #include "../src/math_utils.hpp"
 
 using namespace std;
@@ -19,8 +18,8 @@ int gcd(int a, int b) {
     return m;
 }
 
-int get_rad(int n) {
-    int rad = 1;
+long long get_rad(int n) {
+    long long rad = 1;
     for (int i = 0; i < prime_tab.size(); i++) {
         int p = prime_tab[i];
         if (p * p > n) break;
@@ -36,33 +35,31 @@ int get_rad(int n) {
 
 int main() {
     int mm = 120000;
-//    int mm = 1000;
+//    int mm = 10000;
 
     gen_prime_tab(mm + 1, prime_tab);
 
-    unordered_map<int, int> rad_result;
+    vector<long long> rad_result(mm + 1, -1);
 
     long long tot = 0;
     int cnt = 0;
-    for (int a = 1; a <= mm / 2; a++) {
-        for (int b = a + 1; b <= mm - a; b++) {
-            int c = a + b;
 
-            if (gcd(a, b) != 1) continue;
+    for (int c = 2; c < mm; c++) {
+        if (rad_result[c] == -1) rad_result[c] = get_rad(c);
+        if (rad_result[c] >= c) continue;
 
-            int abc = a * b * c;
-            if (rad_result.find(abc) == rad_result.end()) {
-                if (rad_result.find(a) == rad_result.end()) rad_result[a] = get_rad(a);
-                if (rad_result.find(b) == rad_result.end()) rad_result[b] = get_rad(b);
-                if (rad_result.find(c) == rad_result.end()) rad_result[c] = get_rad(c);
-                rad_result[abc] = rad_result[a] * rad_result[b] * rad_result[c];
-            }
+        for (int a = 1; a < (c + 1) / 2; a++) {
+            if (gcd(a, c) != 1) continue;
 
-            if (rad_result[abc] < c) {
-//                cout << a << " " << b << " " << c << endl;
-                tot += c;
-                cnt ++;
-            }
+            if (rad_result[a] == -1) rad_result[a] = get_rad(a);
+            if (rad_result[a] * rad_result[c] >= c) continue;
+
+            int b = c - a;
+            if (rad_result[b] == -1) rad_result[b] = get_rad(b);
+            if (rad_result[a] * rad_result[b] * rad_result[c] >= c) continue;
+
+            tot += c;
+            cnt++;
         }
     }
 
