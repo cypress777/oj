@@ -47,10 +47,10 @@ int main() {
 
     sum_lut = vector<vector<long long>>(10, vector<long long>(101, 0));
     cnt_lut = vector<vector<long long>>(10, vector<long long>(101, 0));
-    cnt_lut[0][0] = 1;
+    for (int i = 0; i <= 9; i++) sum_lut[1][i] = i, cnt_lut[i][j] = 1;
 
     // len
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 2; i <= 9; i++) {
         // sum
         for (int j = 0; j <= 100; j++) {
             for (k = 0; k <= 9; k++) {
