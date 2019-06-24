@@ -20,17 +20,35 @@ long long mod_pow(long long base, long long power) {
 long long cal(int len, int k) {
     int pos_len = (len + 1) / 2, neg_len = len / 2;
 
+    long long res = 0;
     for (int pos = k; pos <= pos_len * 9; pos++) {
         int neg = pos - k;
 
+        long long base = 0;
+        for (int i = 0; i < pos_len - 1; i++) base = (base * 100 + 1) % MM;
+
         long long pos_cnt = 0, pos_sum = 0;
-        long long pos_base = 0;
-        for (int i = 0; i < pos_len; i++) base = (base * 100 + 1) % MM;
         for (int n = 1; n <= 9; n++) {
-            pos_sum = (pos_sum + sum_lut[pos_len - 1][pos - n] * mod_pow(pos_len - 1, MM - 2) * pos_base) % MM;
+            pos_sum = (pos_sum + sum_lut[pos_len - 1][pos - n] * mod_pow(pos_len - 1, MM - 2) % MM * base) % MM;
             pos_sum = pos_sum + n * cnt_lut[pos_len - 1][pos - n] * (pow(10, len - 1) % MM);
+            pos_cnt = (pos_cnt + cnt_lut[pos_len - 1][pos - n]) % MM;
         }
+
+        long long neg_cnt = 0, neg_sum = 0, neg_base = 0;
+        for (int i = 0; i < neg_len; i++) neg_base = (neg_base * 100 + 1) % MM;
+
+        neg_sum = (sum_lut[neg_len][neg] * mod_pow(neg_len, MM - 2) % MM * neg_base) % MM;
+        neg_cnt = cnt_lut[neg_len][neg];
+
+        if (pos_len == neg_len) {
+            pos_sum = (pos_sum * 10) % MM;
+        } else {
+            neg_sum = (neg_sum * 10) % MM;
+        }
+
+        res = (res + pos_sum * neg_cnt % MM + neg_sum * pos_cnt % MM) % MM;
     }
+    return res;
 }
 
 long long cal_less(int len, int k, int limit) {
