@@ -8,6 +8,15 @@ long long MM = 1000000007;
 vector<vector<long long>> sum_lut;
 vector<vector<long long>> cnt_lut;
 
+long long mod_pow(long long base, long long power) {
+    long long res = 1, num = base;
+    while (power > 0) {
+        if (power % 2 == 1) res = (res * num) % MM;
+        num = (num * base) % MM;
+        power /= 2;
+    }
+}
+
 long long cal(int len, int k) {
     int pos_len = (len + 1) / 2, neg_len = len / 2;
 
@@ -18,7 +27,7 @@ long long cal(int len, int k) {
         long long pos_base = 0;
         for (int i = 0; i < pos_len; i++) base = (base * 100 + 1) % MM;
         for (int n = 1; n <= 9; n++) {
-            pos_sum = (pos_sum + sum_lut[pos_len - 1][pos - n] / (pos_len - 1) * pos_base) % MM;
+            pos_sum = (pos_sum + sum_lut[pos_len - 1][pos - n] * mod_pow(pos_len - 1, MM - 2) * pos_base) % MM;
             pos_sum = pos_sum + n * cnt_lut[pos_len - 1][pos - n] * (pow(10, len - 1) % MM);
         }
     }
