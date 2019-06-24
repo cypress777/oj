@@ -5,88 +5,52 @@ using namespace std;
 
 long long MM = 1000000007;
 
-void permutate(int val, int len, vector<int> cur_nums, int &cnt) {
-    int cur_val = 0;
-    for (int i = 0; i < cur_nums.size(); i++) cur_val += cur_nums[i];
+vector<vector<long long>> sum_lut;
+vector<vector<long long>> cnt_lut;
 
-    if (cur_val > val || cur_nums.size() > len || (len  - cur_nums.size()) * 9 < (val - cur_val)) return;
-
-    if (cur_nums.size() == len) {
-        if (cur_val == val) {
-            int all_per = 1;
-            while (len > 0) {
-                all_per *= len;
-                len--;
-            }
-
-            int repeat = 1;
-            int per = 1;
-            for (int i = 1; i < cur_nums.size(); i++) {
-                if (cur_nums[i] == cur_nums[i - 1]) {
-                    repeat++;
-                    per *= repeat;
-                }
-
-                if (i == cur_nums.size() - 1 || cur_nums[i] != cur_nums[i - 1]) {
-                    all_per /= per;
-                    repeat = 1;
-                    per = 1;
-                }
-            }
-
-            cnt += all_per;
-        }
-        return;
-    }
-
-    for (int i = cur_nums[cur_nums.size() - 1]; i <= 9; i++) {
-        vector<int> new_nums = cur_nums;
-        new_nums.push_back(i);
-        permutate(val, len, new_nums, tot, cnt);
-    }
-}
-
-long long cal_less(long long limit, int len, int k) {
-
-}
-
-long long cal_more(long long limit, int len, int k) {
-
-}
-
-long long cal(int len, k) {
+long long cal(int len, int k) {
     int pos_len = (len + 1) / 2, neg_len = len / 2;
-    long long pos_base = 0, neg_base = 0;
 
-    for (int i = 0; i < neg_len; i++) neg_base = (neg_base * 100 + 1) % MM;
+    for (int pos = k; pos <= pos_len * 9; pos++) {
+        int neg = pos - k;
 
-    pos_base = neg_base;
-
-    if (pos_len == neg_len) {
-        pos_base = (pos_base * 10) % MM;
-    } else {
-        neg_base = (neg_base * 10) % MM;
-        pos_base = (pos_base * 100 + 1) % MM;
+        long long pos_cnt = 0, pos_sum = 0;
+        long long pos_base = 0;
+        for (int i = 0; i < pos_len; i++) base = (base * 100 + 1) % MM;
+        for (int n = 1; n <= 9; n++) {
+            pos_sum = (pos_sum + sum_lut[pos_len - 1][pos - n] / (pos_len - 1) * pos_base) % MM;
+            pos_sum = pos_sum + n * cnt_lut[pos_len - 1][pos - n] * (pow(10, len - 1) % MM);
+        }
     }
+}
 
-    long long res = 0;
+long long cal_less(int len, int k, int limit) {
 
-    for (int pos = k, neg = pos - k; pos <= pos_len * 9; pos++) {
-        int pos_cnt = 0, neg_cnt = 0;
-        permutate(pos, pos_len, {}, pos_cnt);
-        permutate(neg, neg_len, {}, neg_cnt);
+}
 
-        long long pos_sum = 0, neg_sum = 0;
-        pos_sum = pos * pos_cnt / pos_len * pos_base % MM;
-        neg_sum = neg * neg_cnt / neg_len * neg_base % MM;
+long long cal_more(int len, int k, int limit) {
 
-        res = res + ((pos * neg_cnt) % MM + (neg_sum * pos_cnt) % MM) % MM;
-    }
 }
 
 int main() {
     long long l, r, k;
     cin >> l >> r >> k;
+
+    sum_lut = vector<vector<long long>>(10, vector<long long>(101, 0));
+    cnt_lut = vector<vector<long long>>(10, vector<long long>(101, 0));
+    cnt_lut[0][0] = 1;
+
+    // len
+    for (int i = 1; i <= 9; i++) {
+        // sum
+        for (int j = 0; j <= 100; j++) {
+            for (k = 0; k <= 9; k++) {
+                if (j - k < 0) break;
+                sum_lut[i][j] = (sum_lut[i][j] + sum_lut[i - 1][j - k] + k * cnt_lut[i - 1][j - k]) % MM;
+                cnt_lut[i][j] = (cnt_lut[i][j] + cnt_lut[i - 1][j - k]) % MM;
+            }
+        }
+    }
 
     int len_min = 0, len_max = 0;
 
@@ -97,13 +61,13 @@ int main() {
     while (rr > 0) len_max++, rr /= 10;
 
     long long res = 0;
+
     if (len_min == len_max) {
-        res = (cal_more(ll, len_min, k) + cal_less(rr, len_max, k) - cal(len_min, k) + MM) % MM / 2;
+        res = (cal_more(len_min, k, l) + cal_less(len_max, k, r) - cal(len_max, k) + MM) / 2;
     } else {
-        res = cal_more(ll, len_min, k);
-        res = (res + cal_less(rr, len_max, k)) % MM;
-        for (int i = len_min + 1; i < len_max; i++) {
-            res = (res + cal(i, k)) % MM;
+        res = (cal_more(len_min, k, l) + cal_less(len_max, k, r)) % MM;
+        for (int len = len_min + 1; len < len_max; len++) {
+            res = (res + cal(len, k)) % MM;
         }
     }
 
