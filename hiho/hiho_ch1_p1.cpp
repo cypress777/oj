@@ -8,9 +8,6 @@ long long MM = 1000000007;
 vector<vector<long long>> sum_lut;
 vector<vector<long long>> cnt_lut;
 
-void cal(int k, long long limit_min, long long limit_max, long long &res, long long &cnt);
-void cal_same(int len, int k, long long &res, long long &cnt);
-
 int get_len(long long n) {
     int len = 0;
     while(n > 0) len++, n /= 10;
@@ -22,76 +19,70 @@ long long mult_pow10(long long n, int t) {
     return n;
 }
 
-void cal(int k, long long limit_min, long long limit_max, long long &res, long long &cnt) {
-    cout << k << " " << limit_min << " " << limit_max << endl;
-    int len_min = get_len(limit_min), len_max = get_len(limit_max);
-
-    for (int len = len_min + 1; len < len_max; len ++) {
-        cal_same(len, k, res, cnt);
-    }
-
-    if (len_min == len_max) {
-        long long lmin_top = limit_min / mult_pow10(1, len_min - 1), lmax_top = limit_max / mult_pow10(1, len_max - 1);
-
-        long long lmin_rear = limit_min % mult_pow10(1, len_min - 1), lmax_rear = limit_max % mult_pow10(1, len_max - 1);
-
-        int lmin_rear_len = get_len(lmin_rear), lmax_rear_len = get_len(lmax_rear);
-
-        if (lmin_top == lmax_top) {
-            long long tail_sum = 0, tail_cnt = 0, top_sum = 0;
-
-            cal(lmin_top - k, lmin_rear, lmax_rear, tail_sum, tail_cnt);
-
-            top_sum = tail_cnt * lmin_top % MM;
-            mult_pow10(top_sum, len_min - 1);
-
-            res = (res + tail_sum + top_sum) % MM;
-        } else {
-            long long lmin_tail_sum = 0, lmin_tail_cnt = 0, lmin_top_sum = 0;
-
-            cal(lmin_top - k, lmin_rear, mult_pow10(1, len_min - 1) - 1, lmin_tail_sum, lmin_tail_cnt);
-
-            lmin_top_sum = lmin_tail_cnt * lmin_top % MM;
-            mult_pow10(lmin_top_sum, len_min - 1);
-
-            res = (res + lmin_tail_sum + lmin_top_sum) % MM;
-
-            long long lmax_tail_sum = 0, lmax_tail_cnt = 0, lmax_top_sum = 0;
-            cal(lmax_top - k, lmax_rear, mult_pow10(1, len_max - 1) - 1, lmax_tail_sum, lmax_tail_cnt);
-
-            lmax_top_sum = lmax_tail_cnt * lmax_top % MM;
-            mult_pow10(lmax_top_sum, len_max - 1);
-
-            res = (res + lmax_tail_sum + lmax_top_sum);
-        }
-    } else {
-        cal(k, limit_min, mult_pow10(1, len_min) - 1, res, cnt);
-        cal(k, mult_pow10(1, len_max - 1), limit_max, res, cnt);
-    }
+vector<int> get_digits(long long n) {
+    vector<int> digits;
+    string s = to_string(n);
+    for (int ss : s) digits.push_back(ss - '0');
+    return digits;
 }
 
-void cal_same(int len, int k, long long &res, long long &cnt) {
-    cout << len << " " << k << endl;
+void dfs(int k, int pos, vector<int> digits, long long &tot) {
+    int len = digits.size() - pos;
     if (len < 1) return;
-    if (len == 1) {
-        if (k >= 1 && k <= 9) {
-            res++;
-            cnt++;
-        }
-        return;
-    }
 
-    for (int i = 1; i <= 9; i++) {
-        if (i - k < -81 || i - k > 81) break;
+    long long high = 0;
+    for (int i = 0; i < pos; i++) high = (high * 10 + digits[i]) % MM;
+//        cout << "------" << endl;
+//        cout << "-> " << k << " " << pos << " " << tot << " " << high << endl;
+
+    for (int i = 0; i <= digits[pos]; i++) {
+        if (i - k < -81 || i - k > 81) continue;
+
+        if (pos == 0 && i == 0) continue;
+
+        if (pos != digits.size() - 1 && i == digits[pos]) continue;
 
         long long tail = sum_lut[len - 1][i - k + 100] % MM;
 
-        long long top = cnt_lut[len - 1][i - k + 100] * i % MM;
-        mult_pow10(top, len - 1);
+        long long top = (high * 10 + i) % MM;
+        top = cnt_lut[len - 1][i - k + 100] * top % MM;
+        top = mult_pow10(top, len - 1);
 
-        res = (res + tail + top) % MM;
-        cnt = (cnt + cnt_lut[len - 1][i - k + 100]) % MM;
+        tot = (tot + tail + top) % MM;
+
+//        cout << pos << " " << digits[pos] << " " << len << " " << tail << " " << top << " " << tot << endl;
     }
+
+    dfs(digits[pos] - k, pos + 1, digits, tot);
+}
+
+long long cal(int k, long long limit) {
+    if (limit <= 0) return 0;
+    long long res = 0;
+
+    int length = get_len(limit);
+
+    for (int len = 1; len < length; len++) {
+        for (int i = 1; i <= 9; i++) {
+            if (i - k < -81 || i - k > 81) continue;
+
+            long long tail = sum_lut[len - 1][i - k + 100] % MM;
+
+            long long top = cnt_lut[len - 1][i - k + 100] * i % MM;
+            top = mult_pow10(top, len - 1);
+
+            res = (res + tail + top) % MM;
+        }
+    }
+//    cout << res << endl;
+
+    long long tot = 0;
+    dfs(k, 0, get_digits(limit), tot);
+//    cout << "=== tot: " << tot << endl;
+
+    res = (res + tot) % MM;
+
+    return res;
 }
 
 int main() {
@@ -116,11 +107,14 @@ int main() {
         }
     }
 
-    int len_min = get_len(l), len_max = get_len(r);
-
     long long res = 0;
-    long long cnt = 0;
-    cal(k, l, r, res, cnt);
+//    res = cal(k, r);
+////    cal(k, l);
+//
+//    cout << res << endl;
+//    return 0;
+
+    res = (MM + cal(k, r) - cal(k, l - 1)) % MM;
 
     cout << res << endl;
 
