@@ -5,10 +5,20 @@
 using namespace std;
 
 bool is_pairs(const vector<int> &a, const vector<int> &b) {
-    return false;
+    int pairs = 0;
+
+    for (int n : a) if (n >= 2) pairs++;
+    for (int n : b) if (n >= 2) pairs++;
+
+    return pairs >= 7;
 }
 
-bool is_3332(const vector<int> &a, const vector<int> &b) {
+bool is_3332(const vector<int> &a, const vector<int> &b, int step, int cnt) {
+    if (step = 3) {
+        if (cnt < 3) return false;
+
+    }
+
     return false;
 }
 
@@ -18,7 +28,7 @@ bool is_valid(const vector<vector<int>> &hand) {
 
     for (int k = 0; k < 3; k++) {
         if (is_pairs(hand[id_a[k]], hand[id_b[k]])) return true;
-        if (is_3332(hand[id_a[k]], hand[id_b[k]]))) return true;
+        if (is_3332(hand[id_a[k]], hand[id_b[k]], 0, 0)) return true;
     }
 
     return false;
