@@ -13,10 +13,46 @@ bool is_pairs(const vector<int> &a, const vector<int> &b) {
     return pairs >= 7;
 }
 
-bool is_3332(const vector<int> &a, const vector<int> &b, int step, int cnt) {
-    if (step = 3) {
-        if (cnt < 3) return false;
+bool is_432(const vector<int> &a, const vector<int> &b, int step, int cnt) {
+    if (step == 4) {
+        if (cnt < 4) return false;
+        for (int n : a) if (n >= 2) return true;
+        for (int n : b) if (n >= 2) return true;
+        return false;
+    }
 
+    for (int i = 1; i <= 9; i++) {
+        if (a[i] >= 3) {
+            auto new_a = a;
+            new_a[i] -= 3;
+            if (is_432(new_a, b, step + 1, cnt + 1)) return true;
+        }
+
+        if (b[i] >= 3) {
+            auto new_b = b;
+            new_b[i] -= 3;
+
+            if (is_432(a, new_b, step + 1, cnt + 1)) return true;
+        }
+    }
+
+    for (int i = 1; i <= 7; i++) {
+        if (a[i] > 0 && a[i + 1] > 0 && a[i + 2] > 0) {
+            auto new_a = a;
+            new_a[i]--;
+            new_a[i + 1]--;
+            new_a[i + 2]--;
+            if (is_432(new_a, b, step + 1, cnt + 1)) return true;
+        }
+
+        if (b[i] > 0 && b[i + 1] > 0 && b[i + 2] > 0) {
+            auto new_b = b;
+            new_b[i]--;
+            new_b[i + 1]--;
+            new_b[i + 2]--;
+
+            if (is_432(a, new_b, step + 1, cnt + 1)) return true;
+        }
     }
 
     return false;
@@ -28,7 +64,7 @@ bool is_valid(const vector<vector<int>> &hand) {
 
     for (int k = 0; k < 3; k++) {
         if (is_pairs(hand[id_a[k]], hand[id_b[k]])) return true;
-        if (is_3332(hand[id_a[k]], hand[id_b[k]], 0, 0)) return true;
+        if (is_432(hand[id_a[k]], hand[id_b[k]], 0, 0)) return true;
     }
 
     return false;
