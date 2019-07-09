@@ -4,6 +4,7 @@
 using namespace std;
 
 long long MOD = 1000000007;
+int LEN = 8;
 
 vector<vector<long long>> matrix_mult(const vector<vector<long long>> &mat_a,
                                       const vector<vector<long long>> &mat_b) {
@@ -37,7 +38,7 @@ matrix_pow(const vector<vector<long long>> &matrix, int power) {
 
     while (power > 0) {
         if (power % 2 == 1) {
-            result = matrix_mult(base, result);
+            result = matrix_mult(result, base);
         }
 
         base = matrix_mult(base, base);
@@ -51,49 +52,31 @@ int main() {
     int N, x, y;
 
     cin >> N >> x >> y;
+    x--;
+    y--;
 
-    vector<vector<long long>> adj_mat(64, vector<long long>(64, 0));
+    vector<vector<long long>> adj_mat(LEN * LEN, vector<long long>(LEN * LEN, 0));
 
     vector<int> dx = {1, -1, 1, -1, 2, -2, 2, -2};
     vector<int> dy = {2, 2, -2, -2, 1, 1, -1, -1};
 
-    for (int i = 0; i < 64; i++) {
-        int xi = i / 8, yi = i % 8;
+    for (int i = 0; i < LEN * LEN; i++) {
+        int xi = i / LEN, yi = i % LEN;
 
-        for (int k = 0; k < 8; k++) {
-            int xj = xi + dx[k], yj = yi + dy[k], j = xj * 8 + yj;
+        for (int k = 0; k < dx.size(); k++) {
+            int xj = xi + dx[k], yj = yi + dy[k], j = xj * LEN + yj;
 
-            if (xj < 0 || xj >= 8 || yj < 0 || yj >= 8) continue;
+            if (xj < 0 || xj >= LEN || yj < 0 || yj >= LEN) continue;
 
             adj_mat[i][j] = 1;
             adj_mat[j][i] = 1;
         }
     }
 
-    vector<vector<long long>> a = {{1, 2, 3},
-                                   {4, 5, 6},
-                                   {7, 8, 9}};
-    vector<vector<long long>> b = {{1, 0, 0},
-                                   {0, 1, 0},
-                                   {0, 0, 1}};
-    vector<vector<long long>> c = {{1, 0, 0}};
-
-    auto d = matrix_mult(a, c);
-    cout << d.size() << " " << d[0].size() << endl;
-
-    for (int i = 0; i < d.size(); i++) {
-        for (int j = 0; j < d[0].size(); j++) {
-            cout << d[i][j] << "  ";
-        }
-        cout << endl;
-    }
-
-    return 0;
-
     vector<vector<long long>> fin_mat = matrix_pow(adj_mat, N);
 
-    vector<vector<long long>> init(1, vector<long long>(64, 0));
-    init[0][x * 8 + y] = 1;
+    vector<vector<long long>> init(1, vector<long long>(LEN * LEN, 0));
+    init[0][x * LEN + y] = 1;
 
     vector<vector<long long>> result = matrix_mult(fin_mat, init);
 
