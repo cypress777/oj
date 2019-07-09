@@ -18,22 +18,28 @@ int main() {
     vector<int> ids;
     int min_len = -1;
 
-    for (int i = 0; i < s.size(); i++) {
+    int i = 0;
+    while (i < s.size()) {
         if (s[i] == 'h' || s[i] == 'i' || s[i] == 'o') {
             cnt[s[i]]++;
-
-//            cout << s[i] << "  " << cnt['h'] << " " << cnt['i'] << " " << cnt['o'] << endl;
             ids.push_back(i);
 
-            sort(ids.begin(), ids.end());
+//            cout << "----" << endl;
+//            cout << i << " " << s[i] << endl;
+//
+//            for (int id : ids) cout << id << " ";
+//            cout << endl;
+//
+//            for (auto c : cnt) cout << c.first << " " << c.second << ", ";
+//            cout << endl;
 
             if (cnt['h'] == 2 && cnt['i'] == 1 && cnt['o'] == 1) {
                 int len = i - ids[0] + 1;
 
                 if (min_len == -1 || len < min_len) min_len = len;
 
-                ids = {ids[1], ids[2], ids[3]};
                 cnt[s[ids[0]]]--;
+                ids = {ids[1], ids[2], ids[3]};
             } else if (cnt['h'] > 2 || cnt['i'] > 1 || cnt['o'] > 1) {
                 vector<int> new_ids;
 
@@ -56,6 +62,8 @@ int main() {
                 ids = new_ids;
             }
         }
+
+        i++;
     }
 
     cout << min_len << endl;
