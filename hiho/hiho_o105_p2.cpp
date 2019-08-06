@@ -27,11 +27,18 @@ int main() {
 
     for (int i = 0; i < number.size() - 1; i++) {
         int n = number[i] - '0';
-        if (max_val[i + 1] > n) {
+
+        if (max_val[i + 1] >= n) {
             int tmp = max_val[i + 1];
             number[max_id[i + 1]] = n + '0';
             number[i] = tmp + '0';
             break;
+        }
+
+        if (i == number.size() - 2) {
+            char tmp = number[i + 1];
+            number[i + 1] = number[i];
+            number[i] = tmp;
         }
     }
 
