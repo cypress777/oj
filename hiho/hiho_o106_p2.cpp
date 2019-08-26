@@ -34,6 +34,8 @@ int main() {
 
     vector<int> slot;
     for (int i = 0; i < count.size(); i++) {
+        if (i > 0 && count[i] == count[i - 1]) continue;
+
         for (int j = i > 0 ? count[i - 1] + 1 : 1; j < count[i]; j++) {
             slot.push_back(j);
         }
@@ -42,12 +44,16 @@ int main() {
     int slot_cur = slot.size() - 1;
     int step = 0;
 
-    for (int cnt_cur = 0; cnt_cur < count.size(); cnt_cur++) {
-        if (cnt_cur > 0 && count[cnt_cur] == count[cnt_cur - 1]) {
+    for (int i = count.size() - 2; i >= 0; i--) {
+        if (count[i] == count[i + 1]) {
+            while(slot_cur >= 0 && slot[slot_cur] >= count[i]) {
+                slot_cur--;
+            }
+
             if (slot_cur < 0) {
-                step += count[cnt_cur];
+                step += count[i];
             } else {
-                step += count[cnt_cur] - slot[slot_cur];
+                step += count[i] - slot[slot_cur];
                 slot_cur--;
             }
         }
