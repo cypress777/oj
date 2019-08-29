@@ -31,9 +31,7 @@ void get_factors(vector<int> &fcts, const vector<int> &ptab) {
     for (auto p : ptab) {
         if (nn % p == 0) fcts.push_back(p);
 
-        while (nn % p == 0) {
-            nn /= p;
-        }
+        while (nn % p == 0) nn /= p;
 
         if (nn == 0) break;
     }
@@ -42,6 +40,7 @@ void get_factors(vector<int> &fcts, const vector<int> &ptab) {
 void calc(int cnt, int last_id, int cur_cnt, int cur_fct, int &res) {
     if (cnt == cur_cnt) {
         int nf = (K + 1) / cur_fct;
+
         int t = 1;
         while ((cur_fct * t) % 3 != x_rem) t++;
 
