@@ -3,6 +3,9 @@
 
 using namespace std;
 
+int N, K, x_rem;
+vector<int> ptab, fcts;
+
 template <typename T>
 void gen_prime_tab(T n, std::vector<T> &prime_tab) {
     int count = 0;
@@ -23,10 +26,10 @@ void gen_prime_tab(T n, std::vector<T> &prime_tab) {
     }
 }
 
-void get_factors(vector<int> &ft, const vector<int> &ptab) {
+void get_factors(vector<int> &fcts, const vector<int> &ptab) {
     int nn = n;
     for (auto p : ptab) {
-        if (nn % p == 0) ft.push_back(p);
+        if (nn % p == 0) fcts.push_back(p);
 
         while (nn % p == 0) {
             nn /= p;
@@ -36,28 +39,42 @@ void get_factors(vector<int> &ft, const vector<int> &ptab) {
     }
 }
 
-int calc(const vector<int> &ft, int num, int mult, int rem) {
+void calc(int cnt, int last_id, int cur_cnt, int cur_fct, int &res) {
+    if (cnt == cur_cnt) {
+        int nf = (K + 1) / cur_fct;
+        int t = 1;
+        while ((cur_fct * t) % 3 != x_rem) t++;
 
+        res += nf / 3 + (nf % 3 >= t ? 1 : 0);
+    } else {
+        for (int i = last_id + 1; i < fcts.size(); i++) {
+            calc(cnt, i, cur_cnt + 1, cur_fct * fcts[i], res);
+        }
+    }
 }
 
 int main() {
-    int n;
-    cin >> n;
+    cin >> N;
 
-    int k = (n + 3) / 2;
+    K = (N + 3) / 2;
+    x_rem = 3 - K % 3;
 
-    vector<int> ptab;
-    gen_prime_tab(n, ptab);
+    int res = 0;
 
-    vector<int> ft;
-    get_factors(ft, ptab);
+    if (x_rem == 3) {
+        cout << res << endl;
+    } else {
+        gen_prime_tab(n, ptab);
 
-    int cnt = 0;
-    int sign = 1;
-    int fsize = ft.size();
-    for (int i = 0; i < fsize; i++) {
-//        std::cout << ft[i] << std::endl;
-        cnt += sign * calc(ft, i, )
+        get_factors(fcts, ptab);
+
+        int sign = 1;
+        for (int i = 0; i < fcts.size(); i++) {
+            int cur_res = 0;
+            calc(i, -1, 0, 1, cur_res);
+
+            res += sign * cur_res;
+        }
     }
 
     return 0;
