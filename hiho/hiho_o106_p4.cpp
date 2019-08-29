@@ -34,8 +34,9 @@ void get_factors(vector<long long> &ftab, const vector<long long> &ptab) {
 
         while (kk % p == 0) kk /= p;
 
-        if (kk == 0) break;
+        if (kk == 1) break;
     }
+    if (kk > 1) ftab.push_back(kk);
 }
 
 void calc(long long cnt, long long last_id, long long cur_cnt, long long cur_fct, long long &res) {
@@ -83,7 +84,8 @@ int main() {
         gen_prime_tab(static_cast<long long>(sqrt(K + 1)), ptab);
 
         get_factors(ftab, ptab);
-        if (ftab.size() == 0) ftab.push_back(K);
+//        for (auto f : ftab) cout << f << " ";
+//        cout << endl;
 
         for (long long i = 1; i <= ftab.size(); i++) {
             long long cur_res = 0;
