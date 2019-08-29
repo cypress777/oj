@@ -44,7 +44,7 @@ void calc(int cnt, int last_id, int cur_cnt, int cur_fct, int &res) {
         int t = 1;
         while ((cur_fct * t) % 3 != x_rem) t++;
 
-        res += nf / 3 + (nf % 3 >= t ? 1 : 0);
+        res += ((K + 1) / 3 + ((K + 1) % 3 >= (x_rem + 1) ? 1 : 0)) - nf / 3 + (nf % 3 >= t ? 1 : 0);
     } else {
         for (int i = last_id + 1; i < fcts.size(); i++) {
             calc(cnt, i, cur_cnt + 1, cur_fct * fcts[i], res);
