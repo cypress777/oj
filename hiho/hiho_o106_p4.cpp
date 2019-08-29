@@ -30,11 +30,11 @@ void gen_prime_tab(T n, std::vector<T> &prime_tab) {
 void get_factors(vector<long long> &ftab, const vector<long long> &ptab) {
     long long kk = K;
     for (auto p : ptab) {
+        if (p * p > K) break;
+
         if (kk % p == 0) ftab.push_back(p);
 
         while (kk % p == 0) kk /= p;
-
-        if (kk == 1) break;
     }
     if (kk > 1) ftab.push_back(kk);
 }
