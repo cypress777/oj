@@ -5,6 +5,8 @@
 using namespace std;
 
 long long MOD = 1e9 + 7;
+int Len;
+string S;
 
 void get_len_tab(const string &s, vector<int> &len_tab) {
     size_t len = s.size();
@@ -26,8 +28,20 @@ void get_len_tab(const string &s, vector<int> &len_tab) {
     }
 }
 
-long long calc(const vector<vector<bool>> &repeat, ) {
+long long calc(const vector<vector<bool>> &repeat) {
+    vector<long long> res(Len, 0);
 
+    for (int i = 1; i < Len; i++) {
+        if (repeat[0][i]) res[i] = 1;
+
+        for (int j = i - 2; j > 0; j--) {
+            if (repeat[j + 1][i]) {
+                res[i] = (res[i] + res[j]) % MOD;
+            }
+        }
+    }
+
+    return res[Len - 1];
 }
 
 int main() {
@@ -35,42 +49,37 @@ int main() {
     cin >> T;
 
     for (int i = 0; i < T; i++) {
-        int Len;
-        string S;
         cin >> Len >> S;
 
-        long long tot = 0;
         vector<vector<bool>> repeat(Len, vector<bool>(Len, false));
 
         for (int j = 0; j < Len; j++) {
             string s(S.begin() + j, S.end());
             vector<int> len_tab;
 
-//            cout << "---- " << j << endl;
-//            cout << s << endl;
-//
             get_len_tab(s, len_tab);
-//            for (auto l : len_tab) cout << l << " ";
-//            cout << endl;
 
             for (int k = 1; k < len_tab.size(); k++) {
                 int len = len_tab[k];
                 int overlap = len - 1 - (k - len + 1) + 1;
 
-                if (overlap == 0 || (overlap > 0 && len % overlap == 0)) {
+                if (overlap >= 0 && overlap % (len - overlap) == 0) {
                     repeat[j][j + k] = true;
                 }
             }
         }
 
-        for (int j = 0; j < Len; j++) {
-            for (int k = 0; k < Len; k++) {
-                cout << repeat[j][k] << " ";
-            }
-            cout << endl;
-        }
+//        cout << S << endl;
+//        for (int j = 0; j < Len; j++) {
+//            for (int k = 0; k < Len; k++) {
+//                cout << repeat[j][k] << " ";
+//            }
+//            cout << endl;
+//        }
 
-        calc(repeat);
+        long long tot;
+        tot = calc(repeat);
+        cout << tot << endl;
     }
 
     return 0;
