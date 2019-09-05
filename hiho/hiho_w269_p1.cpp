@@ -1,19 +1,19 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 #include <unordered_set>
+#include <bitset>
+#include <cmath>
 
 using namespace std;
 
-int MM = 16;
-int status_cnt;
-int N;
+const int MM = 17;
+int m, n, N, status_cnt;
 vector<unordered_set<int>> attack;
 vector<unordered_set<int>> restrict;
 vector<bool> navigate;
 
-bitset<N> to_bit(int status) {
-    bitset<N> code;
+bitset<MM> to_bit(int status) {
+    bitset<MM> code;
 
     int cnt = 0;
     while (status > 0) {
@@ -24,34 +24,34 @@ bitset<N> to_bit(int status) {
     }
 }
 
-int to_int(bitset<N> code) {
-    return static_cast<int>)(code.to_ulong());
+int to_int(bitset<MM> code) {
+    return static_cast<int>(code.to_ulong());
 }
 
-bool has_navigator(const bitset<N> code, int side) {
+bool has_navigator(const bitset<MM> code, int side) {
     for (int i = 0; i < n; i++) {
-        if (code.test[i] == side && navigate[i]) return true;
+        if (code.test(i) == side && navigate[i]) return true;
     }
 
     return false;
 }
 
-bool no_conflict(const bitset<N> code, int side) {
+bool no_conflict(const bitset<MM> code, int side) {
     for (int i = 0; i < n; i++) {
-        if (code.test[i] == side) {
+        if (code.test(i) == side) {
             bool no_conflict = true;
 
             if (!attack[i].empty()) {
                 for (auto target : attack[i]) {
-                    if (code.test[target] == side) {
+                    if (code.test(target) == side) {
                         no_conflict = false;
                         break;
                     }
                 }
 
                 if (!no_conflict) {
-                    for (auto target : restrict) {
-                        if (code.test[target] == side) {
+                    for (auto target : restrict[i]) {
+                        if (code.test(target) == side) {
                             no_conflict = true;
                             break;
                         }
@@ -66,18 +66,18 @@ bool no_conflict(const bitset<N> code, int side) {
     return true;
 }
 
-void get_next(const bitset<N> &cur_code, const bitset<N> &boat, int cursor, vector<bitset<N>> &next_codes) {
+void get_next(const bitset<MM> &cur_code, const bitset<MM> &boat, int cursor, vector<bitset<MM>> &next_codes) {
     if (cursor >= n) return;
 
     int side = cur_code.test(N - 1);
 
     if (boat.count() > 0 && boat.count() <= m) {
-        bitset<N> next_code = (cur_code ^ boat);
+        bitset<MM> next_code = (cur_code ^ boat);
 
         int next_side = (side ^ 0);
         next_code.set(N - 1) = next_side;
 
-        if (has_navigator(boat, 1), no_conflict(boat, 1) && no_conflict(next_code, side) && no_confict(next_code, next_side)) {
+        if (has_navigator(boat, 1), no_conflict(boat, 1) && no_conflict(next_code, side) && no_conflict(next_code, next_side)) {
             next_codes.push_back(next_code);
         }
 
@@ -85,7 +85,7 @@ void get_next(const bitset<N> &cur_code, const bitset<N> &boat, int cursor, vect
     }
 
     for (int i = cursor; i < n; i++) {
-        if (cur_code.test[i] != side) continue;
+        if (cur_code.test(i) != side) continue;
 
         auto new_boat = boat;
         new_boat.set(i);
@@ -100,8 +100,8 @@ int main() {
     int n, m;
     cin >> n >> m;
 
-    status_cnt = 2 ** n;
     N = n + 1;
+    status_cnt = pow(2, N);
 
     int a, b, c;
     cin >> a >> b >> c;
@@ -126,13 +126,14 @@ int main() {
         navigate[x] = true;
     }
 
-    bitset<N> start_code;
-    bitset<N> end_code.set(1);
+    bitset<MM> start_code;
+    bitset<MM> end_code;
+    end_code.set();
 
-    vector<int> steps(status_cnt * 2, -1);
-    vector<int> vst(status_cnt * 2, -1);
+    vector<int> steps(status_cnt, -1);
+    vector<int> vst(status_cnt, -1);
 
-    vector<bitset<N>> que;
+    vector<bitset<MM>> que;
 
     steps[0] = 0;
     vst[0] = 1;
@@ -140,7 +141,7 @@ int main() {
     int que_cursor = 0;
 
     while (que.size() > que_cursor) {
-        bitset<N> cur_code = que[que_cursor];
+        bitset<MM> cur_code = que[que_cursor];
         que_cursor++;
 
         if (cur_code == end_code) {
@@ -148,11 +149,13 @@ int main() {
             return 0;
         }
 
-        vector<bitset<N>> next_codes;
+        vector<bitset<MM>> next_codes;
         get_next(cur_code, to_bit(0), 0, next_codes);
 
+        cout << "---------" << endl;
         for (auto next_code : next_codes) {
             if (vst[to_int(next_code)] == 1) continue;
+            cout << next_code << endl;
 
             vst[to_int(next_code)] = 1;
 
@@ -161,6 +164,8 @@ int main() {
             que.push_back(next_code);
         }
     }
+
+    cout << -1 << endl;
 
     return 0;
 }
