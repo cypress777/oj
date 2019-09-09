@@ -30,7 +30,9 @@ int to_int(bitset<MM> code) {
 
 bool has_navigator(const bitset<MM> code, int side) {
     for (int i = 0; i < n; i++) {
-        if (code.test(i) == side && navigate[i]) return true;
+        if (code.test(i) == side && navigate[i]) {
+            return true;
+        }
     }
 
     return false;
@@ -67,17 +69,22 @@ bool no_conflict(const bitset<MM> code, int side) {
 }
 
 void get_next(const bitset<MM> &cur_code, const bitset<MM> &boat, int cursor, vector<bitset<MM>> &next_codes) {
-    if (cursor >= n) return;
+    if (cursor > n) return;
 
     int side = cur_code.test(N - 1);
 
     if (boat.count() > 0 && boat.count() <= m) {
         bitset<MM> next_code = (cur_code ^ boat);
 
-        int next_side = (side ^ 0);
-        next_code.set(N - 1) = next_side;
+        int next_side = side == 0 ? 1 : 0;
 
-        if (has_navigator(boat, 1), no_conflict(boat, 1) && no_conflict(next_code, side) && no_conflict(next_code, next_side)) {
+        if (next_side == 1) {
+            next_code.set(N - 1);
+        } else {
+            next_code.reset(N - 1);
+        }
+
+        if (has_navigator(boat, 1) && no_conflict(boat, 1) && no_conflict(next_code, side) && no_conflict(next_code, next_side)) {
             next_codes.push_back(next_code);
         }
 
@@ -92,12 +99,11 @@ void get_next(const bitset<MM> &cur_code, const bitset<MM> &boat, int cursor, ve
 
         int new_cursor = i + 1;
 
-        if (new_cursor < n) get_next(cur_code, new_boat, new_cursor, next_codes);
+        if (new_cursor <= n) get_next(cur_code, new_boat, new_cursor, next_codes);
     }
 }
 
 int main() {
-    int n, m;
     cin >> n >> m;
 
     N = n + 1;
@@ -108,7 +114,7 @@ int main() {
 
     attack = vector<unordered_set<int>>(n, unordered_set<int>());
     restrict = vector<unordered_set<int>>(n, unordered_set<int>());
-    navigate = vector<bool>(n);
+    navigate = vector<bool>(n, false);
 
     int x, y;
     for (int i = 0; i < a; i++) {
@@ -128,7 +134,7 @@ int main() {
 
     bitset<MM> start_code;
     bitset<MM> end_code;
-    end_code.set();
+    for (int i = 0; i < N; i++) end_code.set(i);
 
     vector<int> steps(status_cnt, -1);
     vector<int> vst(status_cnt, -1);
@@ -152,10 +158,8 @@ int main() {
         vector<bitset<MM>> next_codes;
         get_next(cur_code, to_bit(0), 0, next_codes);
 
-        cout << "---------" << endl;
         for (auto next_code : next_codes) {
             if (vst[to_int(next_code)] == 1) continue;
-            cout << next_code << endl;
 
             vst[to_int(next_code)] = 1;
 
