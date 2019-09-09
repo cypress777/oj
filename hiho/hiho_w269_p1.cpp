@@ -22,13 +22,15 @@ bitset<MM> to_bit(int status) {
         status /= 2;
         cnt++;
     }
+
+    return code;
 }
 
-int to_int(bitset<MM> code) {
+int to_int(const bitset<MM> &code) {
     return static_cast<int>(code.to_ulong());
 }
 
-bool has_navigator(const bitset<MM> code, int side) {
+bool has_navigator(const bitset<MM> &code, int side) {
     for (int i = 0; i < n; i++) {
         if (code.test(i) == side && navigate[i]) {
             return true;
@@ -38,30 +40,30 @@ bool has_navigator(const bitset<MM> code, int side) {
     return false;
 }
 
-bool no_conflict(const bitset<MM> code, int side) {
+bool no_conflict(const bitset<MM> &code, int side) {
     for (int i = 0; i < n; i++) {
         if (code.test(i) == side) {
-            bool no_conflict = true;
+            bool conflict = false;
 
             if (!attack[i].empty()) {
                 for (auto target : attack[i]) {
                     if (code.test(target) == side) {
-                        no_conflict = false;
+                        conflict = true;
                         break;
                     }
                 }
 
-                if (!no_conflict) {
+                if (conflict) {
                     for (auto target : restrict[i]) {
                         if (code.test(target) == side) {
-                            no_conflict = true;
+                            conflict = false;
                             break;
                         }
                     }
                 }
             }
 
-            if (!no_conflict) return false;
+            if (conflict) return false;
         }
     }
 
@@ -135,6 +137,11 @@ int main() {
     bitset<MM> start_code;
     bitset<MM> end_code;
     for (int i = 0; i < N; i++) end_code.set(i);
+
+    if (!no_conflict(start_code, 0)) {
+        cout << -1 << endl;
+        return 0;
+    }
 
     vector<int> steps(status_cnt, -1);
     vector<int> vst(status_cnt, -1);
