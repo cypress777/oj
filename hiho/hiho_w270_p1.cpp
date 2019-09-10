@@ -12,23 +12,79 @@ struct Area {
     Area(int l, int r, double w) : left(l), right(r), water(w) {}
 };
 
+void expand(const Area &area, vector<Area> &new_areas, vector<int> &height) {
+    auto new_area = area;
+
+    while (new_area.left == 0 ||
+          (new_area.left > 0 && height[new_area.left] == height[new_area.left - 1])) {
+        new_area.left--;
+    }
+
+    while (new_area.right == height.size() - 1 ||
+           (new_area.right < height.size() - 1 && height[new_area.right] == height[new_area.right + 1])) {
+        new_area.right++;
+    }
+
+    new_areas.push_back(new_area);
+}
+
+void transfer(const Area &area, vector<Area> &new_areas, vector<int> &height) {
+    auto new_area = area;
+
+    while (new_area.left > 0 && height[new_area.left] == height[new_area.left - 1]) {
+        new_area.left--;
+    }
+
+    while (new_area.right < height.size() - 1 && height[new_area.right] == height[new_area.right + 1]) {
+        new_area.right++;
+    }
+
+    new_areas.push_back(new_area);
+}
+
+void split(const Area &area, vector<Area> &new_areas, vector<int> &height) {
+    new_areas.push_back(Area(area.left - 1, area.left - 1, area.water / 2.0));
+    new_areas.push_back(Area(area.right + 1, area.right + 1, area.water / 2.0));
+}
+
+void fill(const Area &area, vector<Area> &new_areas, vector<int> &height) {
+    double bottom = area.right - area.left + 1;
+    double max_water_height = area.water / bottom;
+    double max_volume_height = min(height[area.left - 1] - height[area.left],
+                                   height[area.right + 1] - height[area.right]);
+    double increase_height = min(max_water_height, max_volume_height);
+
+    for (int i = area.left; i <= area.right; i++) {
+        height[i] += increase_height;
+    }
+
+    if (max_water_height > max_volume_height) {
+        double remain_water = (max_water_height - max_volume_height) * bottom;
+        new_areas.push_back(Area(area.left, area.right, remain_water));
+    }
+}
+
 vector<Area> change(const vector<Area> &areas, vector<int> &height) {
-    vector<Area> new_area;
+    vector<Area> new_areas;
 
     for (auto area : areas) {
-        if ((area.left >= 0 || height[area.left] > height[area.left - 1]) &&
-            (area.right == height.size() - 1 || height[area.right] > height[area.right + 1]) {
+        if (area.left < 0 || area.right >= height.size()) continue;
 
-            int new_left = area.left - 1;
-            int new_right = area.left - 1;
-            while (new_left == 0 || (new_left > 0 && height[new_left] >= height[new_left - 1])) {
-                new_left--;
-                if (height[new_left] < height[new_left + 1]) new_right = new_left;
-            }
-
-            new_area.push_back(Area(new_left, area.left - 1, area.water / 2))
+        if ((area.left > 0 && height[area.left] == height[area.left - 1]) ||
+            (area.right < height.size() - 1 && height[area.right] == height[area.right + 1])) {
+            expand(area, new_areas, height);
+        } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) &&
+                   (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
+            split(area, new_areas, height);
+        } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) ||
+                   (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
+            transfer(area, new_areas, height);
+        } else {
+            fill(area, new_areas, height);
         }
     }
+
+    return new_areas;
 }
 
 int main() {
