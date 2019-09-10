@@ -1,15 +1,56 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <pair>
 
 using namespace std;
 
 struct Area {
     int left, right;
-    double water;
+    double height;
 
     explicit Area() {}
-    Area(int l, int r, double w) : left(l), right(r), water(w) {}
+    Area(int l, int r, double w) : left(l), right(r), height(w) {}
+};
+
+struct QuickUnion {
+    vector<int> root, size;
+    vector<Area> areas;
+
+    QuickUnion(const vector<int> &base_height) {
+        int len = base_height.size();
+
+        root = vector<int>(len);
+        size = vector<int>(len, 1);
+
+        for (int i = 0; i < len; i++) {
+            if (i > 0 && base_height[i] == base_height[i - 1]) {
+                root[i] = root[i - 1];
+                continue;
+            }
+
+            root[i] = i;
+            areas[i].left = i;
+            areas[i].right = i;
+            areas[i].height = base_height[i];
+        }
+    }
+
+    void get_root(int i) {
+
+    }
+
+    void get_area(int i) {
+
+    }
+
+    void quick_union(int i, int j, double h) {
+
+    }
+
+    void reset(int i, double h) {
+
+    }
 };
 
 void expand(const Area &area, vector<Area> &new_areas, vector<double> &height) {
@@ -30,20 +71,20 @@ void expand(const Area &area, vector<Area> &new_areas, vector<double> &height) {
 
 void transfer(const Area &area, vector<Area> &new_areas, vector<double> &height) {
     if (area.left == 0 || height[area.left] > height[area.left - 1]) {
-        new_areas.push_back(Area(area.left - 1, area.left - 1, area.water));
+        new_areas.push_back(Area(area.left - 1, area.left - 1, area.height));
     } else {
-        new_areas.push_back(Area(area.right + 1, area.right + 1, area.water));
+        new_areas.push_back(Area(area.right + 1, area.right + 1, area.height));
     }
 }
 
 void split(const Area &area, vector<Area> &new_areas, vector<double> &height) {
-    new_areas.push_back(Area(area.left - 1, area.left - 1, area.water / 2.0));
-    new_areas.push_back(Area(area.right + 1, area.right + 1, area.water / 2.0));
+    new_areas.push_back(Area(area.left - 1, area.left - 1, area.height / 2.0));
+    new_areas.push_back(Area(area.right + 1, area.right + 1, area.height / 2.0));
 }
 
 void fill(const Area &area, vector<Area> &new_areas, vector<double> &height) {
     double bottom = area.right - area.left + 1;
-    double max_water_height = area.water / bottom;
+    double max_water_height = area.height / bottom;
     double max_volume_height = min(height[area.left - 1] - height[area.left],
                                    height[area.right + 1] - height[area.right]);
     double increase_height = min(max_water_height, max_volume_height);
@@ -53,35 +94,35 @@ void fill(const Area &area, vector<Area> &new_areas, vector<double> &height) {
     }
 
     if (max_water_height > max_volume_height) {
-        double remain_water = (max_water_height - max_volume_height) * bottom;
-        new_areas.push_back(Area(area.left, area.right, remain_water));
+        double remain_height = (max_water_height - max_volume_height) * bottom;
+        new_areas.push_back(Area(area.left, area.right, remain_height));
     }
 }
 
 vector<Area> change(const vector<Area> &areas, vector<double> &height) {
     vector<Area> new_areas;
 
-    cout << "-----" << endl;
+//    cout << "-----" << endl;
 
     for (auto area : areas) {
-        cout << area.left << " " << area.right << " " << area.water << endl;
+//        cout << area.left << " " << area.right << " " << area.height << endl;
 
         if (area.left < 0 || area.right >= height.size()) continue;
 
         if ((area.left > 0 && height[area.left] == height[area.left - 1]) ||
             (area.right < height.size() - 1 && height[area.right] == height[area.right + 1])) {
-            cout << "expand" << endl;
+//            cout << "expand" << endl;
             expand(area, new_areas, height);
         } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) &&
                    (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
-            cout << "split" << endl;
+//            cout << "split" << endl;
             split(area, new_areas, height);
         } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) ||
                    (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
-            cout << "transfer" << endl;
+//            cout << "transfer" << endl;
             transfer(area, new_areas, height);
         } else {
-            cout << "fill" << endl;
+//            cout << "fill" << endl;
             fill(area, new_areas, height);
         }
     }
@@ -99,24 +140,23 @@ int main() {
         cin >> ori_h[i];
     }
 
-    vector<double> cur_h = ori_h;
+    QuickUnion realtime_h(ori_h);
 
-    vector<Area> areas(1);
-    areas[0] = Area(S, S, double(M));
+    pair<int, double> injections;
 
     int cnt = 0;
-    while (!areas.empty()) {
-        areas = change(areas, cur_h);
+    while (!injections.empty()) {
+        injections = change(injections, realtime_h);
 
         cnt++;
         if (cnt > 100) break;
     }
 
-    cout << "==== res: " << endl;
-    for (auto h : cur_h) cout << h << " ";
-    cout << endl;
+//    cout << "==== res: " << endl;
+//    for (auto h : cur_h) cout << h << " ";
+//    cout << endl;
 
-    cout << floor(cur_h[T] - ori_h[T]) << endl;
+    cout << floor(realtime_h.get_area(T).height - ori_h[T]) << endl;
 
     return 0;
 }
