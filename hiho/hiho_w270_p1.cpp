@@ -4,7 +4,7 @@
 
 using namespace std;
 
-double eps = 1e-6;
+double eps = 1e-1;
 
 struct Area {
     int left, right;
@@ -51,7 +51,7 @@ struct QuickUnion {
 
     void quick_union(int i, int j) {
         int ri = get_root(i), rj = get_root(j);
-        if (ri == rj || abs(areas[ri].height - areas[rj].height) > eps) return;
+        if (ri == rj || fabs(areas[ri].height - areas[rj].height) > eps) return;
         if (areas[ri].left - areas[rj].right > 1 || areas[rj].left - areas[ri].right > 1) return;
 
         int maxr = size[ri] > size[rj] ? ri : rj;
@@ -83,7 +83,7 @@ vector<pair<int, double>> change(const vector<pair<int, double>> &injections, Qu
     for (auto injection : injections) {
         int N = rt_h.areas.size();
 
-        if (injection.first < 0 || injection.first >= N) continue;
+        if (injection.first < 0 || injection.first >= N || injection.second < eps) continue;
 
         Area area = rt_h.get_area(injection.first);
         Area left_area = (area.left > 0 ? rt_h.get_area(area.left - 1) : Area(-1, -1, -1000));
@@ -141,13 +141,15 @@ int main() {
     while (!injections.empty()) {
         injections = change(injections, rt_h);
         cnt++;
-//        if (cnt > 4) break;
+        if (cnt % 10 == 0) cout << cnt << endl;
     }
 
 //    for (int i = 0; i < ori_h.size(); i++) {
 //        cout << rt_h.get_area(i).height << " ";
 //    }
 //    cout << endl;
+//
+//    cout << T << endl;
 
     cout << floor(rt_h.get_area(T).height + eps - ori_h[T]) << endl;
 
