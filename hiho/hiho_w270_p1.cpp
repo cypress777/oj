@@ -4,6 +4,8 @@
 
 using namespace std;
 
+double eps = 1e-6;
+
 struct Area {
     int left, right;
     double height;
@@ -49,7 +51,7 @@ struct QuickUnion {
 
     void quick_union(int i, int j) {
         int ri = get_root(i), rj = get_root(j);
-        if (ri == rj || areas[ri].height != areas[rj].height) return;
+        if (ri == rj || abs(areas[ri].height - areas[rj].height) > eps) return;
         if (areas[ri].left - areas[rj].right > 1 || areas[rj].left - areas[ri].right > 1) return;
 
         int maxr = size[ri] > size[rj] ? ri : rj;
@@ -138,9 +140,8 @@ int main() {
     int cnt = 0;
     while (!injections.empty()) {
         injections = change(injections, rt_h);
-
         cnt++;
-        if (cnt > 4) break;
+//        if (cnt > 4) break;
     }
 
 //    for (int i = 0; i < ori_h.size(); i++) {
@@ -148,7 +149,7 @@ int main() {
 //    }
 //    cout << endl;
 
-    cout << floor(rt_h.get_area(T).height - ori_h[T]) << endl;
+    cout << floor(rt_h.get_area(T).height + eps - ori_h[T]) << endl;
 
     return 0;
 }
