@@ -37,19 +37,40 @@ struct QuickUnion {
     }
 
     void get_root(int i) {
-
+        int r = root[i];
+        if (r == i) return i;
+        root[i] = get_root(r);
+        return root[i];
     }
 
     void get_area(int i) {
-
+        int r = get_root(i);
+        return areas[r];
     }
 
-    void quick_union(int i, int j, double h) {
+    void quick_union(int i, int j) {
+        int ri = get_root(i), rj = get_root(j);
+        if (ri == rj || areas[ri].height != areas[rj].height) return;
 
+
+        int maxr = size[ri] > size[rj] ? ri : rj;
+        int minr = size[ri] > size[rj] ? rj : ri;
+
+        size[maxr] += size[minr];
+        areas[maxr].left = min(areas[ri].left, areas[rj].left);
+        areas[maxr].right = max(areas[ri].right, areas[rj].right);
+        root[minr] = maxr;
     }
 
     void reset(int i, double h) {
+        int ri = get_root(i);
+        areas[ri].height = h;
 
+        int left_area = areas[ri].left - 1;
+        if (left_area >= 0) quick_union(left_area, i);
+
+        int right_area = areas[ri].right + 1;
+        if (right_area < areas.size()) quick_union(right_area, i);
     }
 };
 
@@ -99,35 +120,35 @@ void fill(const Area &area, vector<Area> &new_areas, vector<double> &height) {
     }
 }
 
-vector<Area> change(const vector<Area> &areas, vector<double> &height) {
-    vector<Area> new_areas;
+pair<int, double> change(const pair<int, double &injections, vector<double> &height) {
+    vector<Area> new_injections;
 
 //    cout << "-----" << endl;
 
-    for (auto area : areas) {
-//        cout << area.left << " " << area.right << " " << area.height << endl;
+    for (auto injection : injections) {
+//        cout << injection.first << " " << injection.second << endl;
 
-        if (area.left < 0 || area.right >= height.size()) continue;
+        if (injection.first < 0 || injection.first >= height.size()) continue;
 
-        if ((area.left > 0 && height[area.left] == height[area.left - 1]) ||
-            (area.right < height.size() - 1 && height[area.right] == height[area.right + 1])) {
+        if ((injection.left > 0 && height[injection.left] == height[injection.left - 1]) ||
+            (injection.right < height.size() - 1 && height[injection.right] == height[injection.right + 1])) {
 //            cout << "expand" << endl;
-            expand(area, new_areas, height);
-        } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) &&
-                   (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
+            expand(injection, new_injections, height);
+        } else if ((injection.left == 0 || height[injection.left] > height[injection.left - 1]) &&
+                   (injection.right == height.size() - 1 || height[injection.right] > height[injection.right + 1])) {
 //            cout << "split" << endl;
-            split(area, new_areas, height);
-        } else if ((area.left == 0 || height[area.left] > height[area.left - 1]) ||
-                   (area.right == height.size() - 1 || height[area.right] > height[area.right + 1])) {
+            split(injection, new_injections, height);
+        } else if ((injection.left == 0 || height[injection.left] > height[injection.left - 1]) ||
+                   (injection.right == height.size() - 1 || height[injection.right] > height[injection.right + 1])) {
 //            cout << "transfer" << endl;
-            transfer(area, new_areas, height);
+            transfer(injection, new_injections, height);
         } else {
 //            cout << "fill" << endl;
-            fill(area, new_areas, height);
+            fill(injection, new_injections, height);
         }
     }
 
-    return new_areas;
+    return new_injections;
 }
 
 int main() {
