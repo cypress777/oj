@@ -62,47 +62,18 @@ struct QuickUnion {
     }
 
     void reset(int i, double h) {
-        int ri = get_root(i);
-        areas[ri].height = h;
+        int root_i = get_root(i);
+        areas[root_i].height = h;
 
-        int left_area = areas[ri].left - 1;
-        if (left_area >= 0) quick_union(left_area, i);
+        int left_i = areas[root_i].left - 1;
+        if (left_i >= 0) quick_union(left_i, i);
 
-        int right_area = areas[ri].right + 1;
-        if (right_area < areas.size()) quick_union(right_area, i);
+        int root_ight_i = areas[ri].right + 1;
+        if (right_i < areas.size()) quick_union(right_i, i);
     }
 };
 
-void expand(const Area &area, vector<Area> &new_areas, vector<double> &height) {
-    auto new_area = area;
-
-    while (new_area.left == 0 ||
-          (new_area.left > 0 && height[new_area.left] == height[new_area.left - 1])) {
-        new_area.left--;
-    }
-
-    while (new_area.right == height.size() - 1 ||
-           (new_area.right < height.size() - 1 && height[new_area.right] == height[new_area.right + 1])) {
-        new_area.right++;
-    }
-
-    new_areas.push_back(new_area);
-}
-
-void transfer(const Area &area, vector<Area> &new_areas, vector<double> &height) {
-    if (area.left == 0 || height[area.left] > height[area.left - 1]) {
-        new_areas.push_back(Area(area.left - 1, area.left - 1, area.height));
-    } else {
-        new_areas.push_back(Area(area.right + 1, area.right + 1, area.height));
-    }
-}
-
-void split(const Area &area, vector<Area> &new_areas, vector<double> &height) {
-    new_areas.push_back(Area(area.left - 1, area.left - 1, area.height / 2.0));
-    new_areas.push_back(Area(area.right + 1, area.right + 1, area.height / 2.0));
-}
-
-void fill(const Area &area, vector<Area> &new_areas, vector<double> &height) {
+void fill(const pair<int, double> &injection, vector<pair<int, double>> &new_injections, vector<double> &rt_h) {
     double bottom = area.right - area.left + 1;
     double max_water_height = area.height / bottom;
     double max_volume_height = min(height[area.left - 1] - height[area.left],
@@ -119,30 +90,45 @@ void fill(const Area &area, vector<Area> &new_areas, vector<double> &height) {
     }
 }
 
-pair<int, double> change(const pair<int, double> &injections, QuickUnion &rt_h) {
+pair<int, double> change(const vector<pair<int, double>> &injections, QuickUnion &rt_h) {
     vector<Area> new_injections;
 
 //    cout << "-----" << endl;
 
     for (auto injection : injections) {
         Area area = rt_h.get_area(injection.first);
-        Area left_area = area.left > 0 ? rt_h.get_area(area.left - 1) : Area(-1, -1, -1);
-        Area right_area = area.right < rt_h.size() - 1 ? rt_h.get_area(area.right + 1) : Area(-1, -1, -1);
-//        cout << area.left << " " << area.right << endl;
+        Area left_area = (area.left > 0 ? rt_h.get_area(area.left - 1) : Area(-1, -1, -1000));
+        Area right_area = (area.right < rt_h.size() - 1 ?
+                           rt_h.get_area(area.right + 1) : Area(rt_h.size(), rt_h.size(), -1000));
+//        cout << injection.first << " " << area.left << " " << area.right << " " << injection.second << endl;
 
         if (area.left < 0 || area.right >= height.size()) continue;
 
-        if ((area.left == 0 || area.height > left_area.height) &&
-            (area.right == height.size() - 1 || area.height > right_area.height)) {
+        if (area.height > left_area.height && area.height > right_area.height) {
 //            cout << "split" << endl;
-            split(injection, new_injections, rt_h);
-        } else if ((injection.left == 0 || height[injection.left] > height[injection.left - 1]) ||
-                   (injection.right == height.size() - 1 || height[injection.right] > height[injection.right + 1])) {
+            new_injections.push_back(pair<int, double>(area.left - 1, injection.second / 2.0));
+            new_injections.push_back(pair<int, double>(area.right + 1, injection.second / 2.0));
+        } else if (area.height > left_area.height || area.height > right_area.height) {
 //            cout << "transfer" << endl;
-            transfer(injection, new_injections, rt_h);
+            if (area.height > left_area.height) {
+                new_injections.push_back(pair<int, double>(area.left - 1, injection.second));
+            } else {
+                new_injections.push_back(pair<int, double>(area.right + 1, injection.second));
+            }
         } else {
 //            cout << "fill" << endl;
-            fill(injection, new_injections, rt_h);
+            double bottom = area.right - area.left + 1;
+            double max_water_height = injection.second / bottom;
+            double max_volume_height = min(left_area.height - area.height,
+                                           right_area.height - area.height);
+            double increase_height = min(max_water_height, max_volume_height);
+
+            rt_h.reset(area.left, area.height + increase_height);
+
+            if (max_water_height > max_volume_height) {
+                double remain_volume = (max_water_height - max_volume_height) * bottom;
+                new_injections.push_back(pair<int, double>(area.left, remain_volume));
+            }
         }
     }
 
@@ -161,7 +147,8 @@ int main() {
 
     QuickUnion rt_h(ori_h);
 
-    pair<int, double> injections;
+    vector<pair<int, double>> injections;
+    injections.push_back(pair<int, double>(S, M));
 
     int cnt = 0;
     while (!injections.empty()) {
