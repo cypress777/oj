@@ -4,7 +4,7 @@
 
 using namespace std;
 
-double eps = 1e-1;
+double eps = 1e-6;
 
 struct Area {
     int left, right;
@@ -38,6 +38,8 @@ struct QuickUnion {
     }
 
     int get_root(int i) {
+        if (i < 0 || i >= areas.size()) return i;
+
         int r = root[i];
         if (r == i) return i;
         root[i] = get_root(r);
@@ -75,32 +77,44 @@ struct QuickUnion {
     }
 };
 
+void push_injection(vector<pair<int, double>> &injections, pair<int, double> new_injection, QuickUnion &rt_h) {
+    bool existed = false;
+    for (int i = 0; i < injections.size(); i++) {
+        if (rt_h.get_root(injections[i].first) == rt_h.get_root(new_injection.first)) {
+            injections[i].second += new_injection.second;
+            existed = true;
+            break;
+        }
+    }
+    if (!existed) injections.push_back(new_injection);
+}
+
 vector<pair<int, double>> change(const vector<pair<int, double>> &injections, QuickUnion &rt_h) {
     vector<pair<int, double>> new_injections;
 
-//    cout << "-----" << endl;
+//    cout << "----- " << injections.size() << endl;
 
     for (auto injection : injections) {
         int N = rt_h.areas.size();
 
         if (injection.first < 0 || injection.first >= N || injection.second < eps) continue;
+        //        cout << injection.first << " " << area.left << " " << area.right << " " << injection.second << endl;
 
         Area area = rt_h.get_area(injection.first);
         Area left_area = (area.left > 0 ? rt_h.get_area(area.left - 1) : Area(-1, -1, -1000));
         Area right_area = (area.right < N - 1 ?
                            rt_h.get_area(area.right + 1) : Area(N, N, -1000));
-//        cout << injection.first << " " << area.left << " " << area.right << " " << injection.second << endl;
 
         if (area.height > left_area.height && area.height > right_area.height) {
 //            cout << "split" << endl;
-            new_injections.push_back(pair<int, double>(area.left - 1, injection.second / 2.0));
-            new_injections.push_back(pair<int, double>(area.right + 1, injection.second / 2.0));
+            push_injection(new_injections, pair<int, double>(area.left - 1, injection.second / 2.0), rt_h);
+            push_injection(new_injections, pair<int, double>(area.right + 1, injection.second / 2.0), rt_h);
         } else if (area.height > left_area.height || area.height > right_area.height) {
 //            cout << "transfer" << endl;
             if (area.height > left_area.height) {
-                new_injections.push_back(pair<int, double>(area.left - 1, injection.second));
+                push_injection(new_injections, pair<int, double>(area.left - 1, injection.second), rt_h);
             } else {
-                new_injections.push_back(pair<int, double>(area.right + 1, injection.second));
+                push_injection(new_injections, pair<int, double>(area.right + 1, injection.second), rt_h);
             }
         } else {
 //            cout << "fill" << endl;
@@ -114,7 +128,7 @@ vector<pair<int, double>> change(const vector<pair<int, double>> &injections, Qu
 
             if (max_water_height > max_volume_height) {
                 double remain_volume = (max_water_height - max_volume_height) * bottom;
-                new_injections.push_back(pair<int, double>(area.left, remain_volume));
+                push_injection(new_injections, pair<int, double>(area.left, remain_volume), rt_h);
             }
         }
     }
@@ -137,19 +151,14 @@ int main() {
     vector<pair<int, double>> injections;
     injections.push_back(pair<int, double>(S, M));
 
-    int cnt = 0;
     while (!injections.empty()) {
         injections = change(injections, rt_h);
-        cnt++;
-        if (cnt % 10 == 0) cout << cnt << endl;
     }
 
 //    for (int i = 0; i < ori_h.size(); i++) {
 //        cout << rt_h.get_area(i).height << " ";
 //    }
 //    cout << endl;
-//
-//    cout << T << endl;
 
     cout << floor(rt_h.get_area(T).height + eps - ori_h[T]) << endl;
 
