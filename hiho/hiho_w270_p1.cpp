@@ -109,9 +109,9 @@ vector<pair<int, double>> change(const vector<pair<int, double>> &injections, Qu
 //            cout << "split" << endl;
             push_injection(new_injections, pair<int, double>(area.left - 1, injection.second / 2.0), rt_h);
             push_injection(new_injections, pair<int, double>(area.right + 1, injection.second / 2.0), rt_h);
-        } else if (area.height > left_area.height || area.height > right_area.height) {
+        } else if (area.height > left_area.height + eps || area.height > right_area.height + eps) {
 //            cout << "transfer" << endl;
-            if (area.height > left_area.height) {
+            if (area.height > left_area.height + eps) {
                 push_injection(new_injections, pair<int, double>(area.left - 1, injection.second), rt_h);
             } else {
                 push_injection(new_injections, pair<int, double>(area.right + 1, injection.second), rt_h);
@@ -126,7 +126,7 @@ vector<pair<int, double>> change(const vector<pair<int, double>> &injections, Qu
 
             rt_h.reset(area.left, area.height + increase_height);
 
-            if (max_water_height > max_volume_height) {
+            if (max_water_height > max_volume_height + eps) {
                 double remain_volume = (max_water_height - max_volume_height) * bottom;
                 push_injection(new_injections, pair<int, double>(area.left, remain_volume), rt_h);
             }
@@ -160,7 +160,7 @@ int main() {
 //    }
 //    cout << endl;
 
-    cout << floor(rt_h.get_area(T).height + eps - ori_h[T]) << endl;
+    cout << int(floor(rt_h.get_area(T).height + eps)) - ori_h[T] << endl;
 
     return 0;
 }
