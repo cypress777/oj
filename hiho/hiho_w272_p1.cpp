@@ -7,19 +7,26 @@ int N, M;
 
 int main() {
     cin >> N >> M;
+    cout << N <<  " " << M << endl;
 
     vector<int> dx{0, -1, 0, 1};
     vector<int> dy{-1, 0, 1, 0};
 
     int sx, sy, ex, ey;
 
-    vector<vector<int>> maze(N, vector<int>(M));
+    vector<vector<char>> maze(N, vector<char>(M));
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
             cin >> maze[i][j];
 
-            if (maze[i][j] == 'S') sx = i, sy = j;
-            if (maze[i][j] == 'T') ex = i, ey = j;
+            if (maze[i][j] == 'S') {
+                sx = i;
+                sy = j;
+            }
+            if (maze[i][j] == 'T') {
+                ex = i;
+                ey = j;
+            }
         }
     }
 
@@ -50,8 +57,8 @@ int main() {
                     }
                 }
                 if (k == 3) {
-                    if (i == 0 || maze[i][M - 1 - j] == '#') {
-                        next[k][i][M - 1 - j]= 0;
+                    if (j == 0 || maze[i][M - 1 - j] == '#') {
+                        next[k][i][M - 1 - j] = 0;
                     } else {
                         next[k][i][M - 1 - j] = next[k][i][M - j] + 1;
                     }
@@ -64,7 +71,7 @@ int main() {
     vector<int> steps;
     vector<vector<vector<int>>> vst(N, vector<vector<int>>(M, vector<int>(4, -1)));
     for (int i = 0; i < 4; i++) {
-        que_pos.push_back((sx * M + sy) * 4 + i);
+        que.push_back((sx * M + sy) * 4 + i);
         steps.push_back(0);
         vst[sx][sy][i] = 1;
     }
@@ -76,7 +83,7 @@ int main() {
         int cur_x = que[front] / 4 / M;
         int cur_steps = steps[front];
 
-        if (cur_x == ex && cur_y = ey) {
+        if (cur_x == ex && cur_y == ey) {
             cout << cur_steps << endl;
             break;
         }
@@ -84,12 +91,13 @@ int main() {
         front++;
 
         for (int d = 0; d < 4; d++) {
-            int next_x = cur_x + dx * next[d][cur_x][cur_y];
-            int next_y = cur_y + dy * next[d][cur_x][cur_y];
+            int next_x = cur_x + dx[d] * next[d][cur_x][cur_y];
+            int next_y = cur_y + dy[d] * next[d][cur_x][cur_y];
 
             if (vst[next_x][next_y][d] != -1) continue;
+            vst[next_x][next_y][d] = 1;
 
-            que.push_back((next_x * M + next_x) * 4 + d);
+            que.push_back((next_x * M + next_y) * 4 + d);
             steps.push_back(cur_steps + 1);
         }
     }
