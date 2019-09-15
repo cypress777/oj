@@ -38,10 +38,11 @@ int main() {
     vector<vector<vector<int>>> up_cnt(N, vector<vector<int>>(N, vector<int>(N + 1)));
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            for (int k = 1; k <= j + 1; k++) {
+            for (int k = 1; k <= i + 1; k++) {
                 up_cnt[i][j][k] = 1;
                 if (j > 0 &&
-                    up[i][j] - up[i - k][j] == up[i][j - 1] - up[i - k][j - 1]) up_cnt[i][j][k] += up_cnt[i][j - 1][k];
+                    up[i][j] - (i >= k ? up[i - k][j] : 0) ==
+                    up[i][j - 1] - (i >= k ? up[i - k][j - 1] : 0)) up_cnt[i][j][k] += up_cnt[i][j - 1][k];
             }
         }
     }
