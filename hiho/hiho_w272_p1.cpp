@@ -8,8 +8,8 @@ int N, M;
 int main() {
     cin >> N >> M;
 
-    vector<int> dx{0, 1, 0, -1};
-    vector<int> dy{1, 0, -1, 0};
+    vector<int> dx{0, -1, 0, 1};
+    vector<int> dy{-1, 0, 1, 0};
 
     int sx, sy, ex, ey;
 
@@ -28,7 +28,34 @@ int main() {
     for (int k = 0; k < 4; k++) {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-
+                if (k == 0) {
+                    if (i == 0 || maze[i][j] == '#') {
+                        next[k][i][j] = 0;
+                    } else {
+                        next[k][i][j] = next[k][i - 1][j] + 1;
+                    }
+                }
+                if (k == 2) {
+                    if (i == 0 || maze[N - 1 - i][j] == '#') {
+                        next[k][N - 1 - i][j] = 0;
+                    } else {
+                        next[k][N - 1 - i][j] = next[k][N - i][j] + 1;
+                    }
+                }
+                if (k == 1) {
+                    if (j == 0 || maze[i][j] == '#') {
+                        next[k][i][j] = 0;
+                    } else {
+                        next[k][i][j] = next[k][i][j - 1] + 1;
+                    }
+                }
+                if (k == 3) {
+                    if (i == 0 || maze[i][M - 1 - j] == '#') {
+                        next[k][i][M - 1 - j]= 0;
+                    } else {
+                        next[k][i][M - 1 - j] = next[k][i][M - j] + 1;
+                    }
+                }
             }
         }
     }
