@@ -29,11 +29,11 @@ double R(long long n) {
 }
 
 int main() {
-    long long MM = 1e10;
+    long long MM = 7e8;
     double b = B(MM);
     cout << b << endl;
     double r = R(MM);
-    cout << std::setprecision(12) << b << " " << r << " " << r - b << endl;
+    cout << std::setprecision(10) << b << " " << r << " " << r - b << endl;
 
     return 0;
 }

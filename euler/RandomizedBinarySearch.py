@@ -17,6 +17,8 @@ def R(n):
     for i in range(2, n + 1):
         ii = i * i
         res = (ii - 1) / ii * res - (ii - 2 * i + 1) / ii + 1
+        if i % int(1e8) == 0:
+            print(i, res)
 
     return res
 
