@@ -22,7 +22,7 @@ double B(long long n) {
 double R(long long n) {
     double res = 1;
     for (long long i = 2; i <= n; i++) {
-        res = (double(i * i) - 1) / double(i * i) * res - double(i - 1) * double(i - 1) / (i * i) + 1;
+        res = double(i + 1) / double(i) * double(i - 1) / double(i) * res - double(i - 1) / double(i) * double(i - 1) / double(i) + 1;
     }
 
     return res;
@@ -31,8 +31,9 @@ double R(long long n) {
 int main() {
     long long MM = 1e10;
     double b = B(MM);
+    cout << b << endl;
     double r = R(MM);
-    cout << std::setprecision(8) << b << " " << r << " " << r - b << endl;
+    cout << std::setprecision(12) << b << " " << r << " " << r - b << endl;
 
     return 0;
 }
