@@ -67,7 +67,7 @@ int main() {
     int tot_b = 0;
     for (auto b : B) tot_b += b;
 
-    Number max_res(0, 1);
+    Number max_res(1, 2);
     Number min_res(1000, 1);
 
     set<string> all_res;
@@ -75,6 +75,10 @@ int main() {
     for (int i = 1; i <= B[0]; i++) {
         for (int j = 1; j <= i * A[0] / B[0]; j++) {
             Number factor = Number(i, B[0]) / Number(j, A[0]);
+
+            Number ratio = (factor / max_res);
+            if (ratio.n_ <= ratio.d_) continue;
+
             string sfactor = to_string(factor.n_) + "/" + to_string(factor.d_);
 
             if (factor.n_ <= factor.d_) continue;
@@ -82,7 +86,7 @@ int main() {
 
             bool found = false;
 
-            for (int k = 1; k <= B[1]; k++) {
+            for (int k = 1; k <= i * B[1] / B[0]; k++) {
                 if (found) break;
 
                 Number next_num = Number(k * A[1], B[1]) / factor;
@@ -90,7 +94,7 @@ int main() {
                 if (next_num.d_ == 1) {
                     int a1 = next_num.n_;
 
-                    for (int l = 1; l <= B[2]; l++) {
+                    for (int l = 1; l <= k * B[2] / B[1]; l++) {
                         if (found) break;
 
                         next_num = Number(l * A[2], B[2]) / factor;
