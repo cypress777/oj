@@ -20,8 +20,9 @@ int main() {
     long long X, Y;
     cin >> X >> Y;
 
-    if (sn == "?" && Y == 0) {
-        cout << "0" << endl;
+    if (sn == "?") {
+        if (Y < 10) cout << Y << endl;
+        else cout << "No solution" << endl;
         return 0;
     }
 
@@ -75,8 +76,8 @@ int main() {
 //    }
 //
 //    cout << endl;
-//    for (int i = 0; i < flg.size(); i++) {
-//        for (int j = 0; j < flg[i].size(); j++) {
+//    for (int i = 0; i < ans.size(); i++) {
+//        for (int j = 0; j < ans[i].size(); j++) {
 //            cout << ans[i][j] << " ";
 //        }
 //        cout << endl;
@@ -86,14 +87,10 @@ int main() {
     if (flg[0][Y] == 1) {
         string res = sn;
         long long rem = Y;
-        int idx = places.size() - 1;
 
-        for (int i = sn.size() - 1; i >= 0; i--) {
-            if (sn[i] == '?') {
-                res[i] = ans[idx][rem] + '0';
-                rem = (rem - (ans[idx][rem] * pow_10(sn.size() - 1 - i, X)) % X + X) % X;
-                idx--;
-            }
+        for (int i = places.size() - 1; i >= 0; i--) {
+            res[places[i]] = ans[i][rem] + '0';
+            rem = (rem - (ans[i][rem] * pow_10(sn.size() - 1 - places[i], X)) % X + X) % X;
         }
 
         cout << res << endl;
