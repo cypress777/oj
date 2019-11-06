@@ -55,7 +55,8 @@ int main() {
     int root = 0;
 
     for (int i = 1; i <= N; i++) {
-        cin >> fa[i][0] >> weight[i][0];
+//        cin >> fa[i][0] >> weight[i][0];
+        scanf("%d %d", &fa[i][0], &weight[i][0]);
         if (fa[i][0] == 0) weight[i][0] = INF;
         child[fa[i][0]].push_back(i);
     }
@@ -74,7 +75,12 @@ int main() {
 
     for (int i = 0; i < Q; i++) {
         int u, v;
-        cin >> u >> v;
+        scanf("%d%d", &u, &v);
+
+        if (u == v) {
+            printf("%d\n", 0);
+            continue;
+        }
 
         if (depth[u] > depth[v]) swap(u, v);
         int ori_u = u, ori_v = v;
@@ -105,7 +111,7 @@ int main() {
         int uw = get_weight(ori_u, u_steps, fa, weight);
         int vw = get_weight(ori_v, v_steps, fa, weight);
 
-        cout << min(uw, vw) << endl;
+        printf("%d\n", min(uw, vw));
     }
 
     return 0;
