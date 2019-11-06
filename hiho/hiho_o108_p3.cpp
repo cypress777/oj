@@ -33,7 +33,7 @@ int get_ancesetor(int node, int steps, const vector<vector<int>> &fa) {
 }
 
 int get_weight(int node, int steps, const vector<vector<int>> &fa, const vector<vector<int>> &weight) {
-    int w = weight[node][0];
+    int w = INF;
     while (steps > 0) {
         int k = log_2(steps);
         w = min(w, weight[node][k]);
@@ -63,12 +63,6 @@ int main() {
     vector<int> depth(N + 1, -1);
     get_depth(child, 0, depth);
 
-//    cout << "depth:" << endl;
-//    for (int i = 0; i <= N; i++) {
-//        cout << depth[i] << " ";
-//    }
-//    cout << endl << "----" << endl;
-
     for (int i = 1; i <= MM; i++) {
         for (int j = 1; j <= N; j++) {
             if (fa[j][i - 1] <= 0) continue;
@@ -77,13 +71,6 @@ int main() {
             weight[j][i] = min(weight[fa[j][i - 1]][i - 1], weight[j][i - 1]);
         }
     }
-
-//    for (int i = 0; i <= MM; i++) {
-//        cout << "---- " << i << endl;
-//        for (int j = 1; j <= N; j++) {
-//            cout << j << " " << fa[j][i] << " " << weight[j][i] << endl;
-//        }
-//    }
 
     for (int i = 0; i < Q; i++) {
         int u, v;
