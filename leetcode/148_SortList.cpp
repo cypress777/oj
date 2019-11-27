@@ -58,15 +58,19 @@ public:
             m_end->next = rs;
             new_end = re;
         }
+
+        new_end->next = NULL;
     }
 
     ListNode* sortList(ListNode* head) {
+        if (head == NULL) return NULL;
+
         ListNode *tail = head;
         while (tail->next != NULL) tail = tail->next;
 
         ListNode *new_head = NULL, *new_tail = NULL;
         helper(head, tail, new_head, new_tail);
-        cout << new_head->val <<" " << new_tail->val << endl;
+
         return new_head;
     }
 };
