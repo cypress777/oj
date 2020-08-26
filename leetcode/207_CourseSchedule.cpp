@@ -4,18 +4,26 @@ public:
     vector<bool> is_cycle_unit;
     vector<bool> checked;
     
-    bool isCycleUnit(int id, vector<bool> visited, vector<bool>& stack) {
+    bool isCycleUnit(int id, vector<bool>& stack) {
         if (checked[id]) return is_cycle_unit[id];
         
-        if (!visited[id]) {
-            visited[id] = true;
+        if (stack[id]) {
+            checked[id] = true;
+            is_cycle_unit[id] = true;
+            return true;
+        }
+        
+        if (!stack[id]) {
             stack[id] = true;
             
             for (int i = 0; i < adj_list[id].size(); i++) {
                 int adj_id = adj_list[id][i];
                 
-                if (!visited[adj_id] && isCycleUnit(adj_id, visited, stack)) return true;
-                else if (stack[adj_id]) return true;
+                if (isCycleUnit(adj_id, stack)) {
+                    checked[id] = true;
+                    is_cycle_unit[id] = true;
+                    return true;
+                }
             }
         }
         
@@ -38,11 +46,9 @@ public:
         }
         
         for (int i = 0; i < numCourses; i++) {
-            vector<bool> visited(numCourses, false);
             vector<bool> stack(numCourses, false);
             
-            if (checked[i] && is_cycle_unit[i]) return false;
-            else if (isCycleUnit(i, visited, stack)) return false;
+            if (isCycleUnit(i, stack)) return false;
         }
         return true;
     }
