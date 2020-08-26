@@ -9,37 +9,43 @@ int main() {
     string S;
     cin >> S;
 
-    vector<long long> sub_cnt(S.size() + 1, 0);
-    for (int i = 1; i <= S.size(); i++) {
-        sub_cnt[i] = sub_cnt[i - 1] + i - 1;
+    vector<int> sub_cnt(S.size() + 1, 0);
+    for (int i = 3; i <= S.size(); i++) {
+        if (i == 3) {
+            sub_cnt[i] = 1;
+        } else {
+            sub_cnt[i] = sub_cnt[i - 1] + i - 2;
+        }
     }
 
-    int len = 1, cnt = 1, tot = S.size();
-    char last = S[0];
+    int cnt = 0;
+    int id = 0;
+    int len = 0;
+    long long tot = 0;
 
-    for (int i = 1; i < S.size(); i++) {
+    while (id < S.size()) {
         len++;
 
-        if (S[i] == last) {
+        if (id > 0 && S[id] == S[id - 1]) {
             cnt++;
-
-            if (cnt > 2) {
-                tot += sub_cnt[len - 1];
-//                cout << i << " " << cnt << " " << len << " " << sub_cnt[len - 1] << endl;
-
-                cnt = 2;
-                len = 2;
-            }
         } else {
             cnt = 1;
-            last = S[i];
         }
 
-        if (i == S.size() - 1) {
-            tot += sub_cnt[len];
-//            cout << i << " " << cnt << " " << len << " " << sub_cnt[len - 1] << endl;
+        if (cnt == 3) {
+            len--;
+            if (len >= 3) tot += sub_cnt[len];
+
+            cnt = 2;
+            len = 2;
         }
+
+        id++;
     }
+
+    if (len >= 3) tot += sub_cnt[len];
+
+    tot = tot + S.size() + (S.size() - 1);
 
     cout << tot << endl;
 
