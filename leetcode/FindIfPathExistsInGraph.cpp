@@ -23,6 +23,29 @@ bool dfs(int x) {
     return false;
 }
 
+bool bfs() {
+    vector<int> queue({S});
+    Flag[S] = 1;
+    int head = 0, tail = 0;
+
+    while (head <= tail) {
+        int cur = queue[head];
+        head++;
+
+        if (cur == E) return true;
+
+        for (int next : Edges[cur]) {
+            if (Flag[next] == 0) {
+                queue.push_back(next);
+                Flag[next] = 1;
+                tail++;
+            }
+        }
+    }
+
+    return false;
+}
+
 public:
     bool validPath(int n, vector<vector<int>>& edges, int start, int end) {
         N = n, S = start, E = end;
@@ -36,6 +59,7 @@ public:
 
         Flag = vector<int>(n, 0);
 
-        return dfs(start);
+        // return dfs(start);
+        return bfs();
     }
 };

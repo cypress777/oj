@@ -1,5 +1,5 @@
 #include<vector>;
-
+#include<algorithm>;
 using namespace std;
 
 
@@ -25,6 +25,34 @@ void dfs(int n, vector<int> path) {
     visit[n] = 0;
 }
 
+vector<vector<int>> queue;
+int head, tail;
+
+void bfs() {
+    queue = vector<vector<int>>({{S}});
+    visit[S] = 1;
+    head = 0, tail = 0;
+
+    while (head <= tail) {
+        auto cur = queue[head];
+        head++;
+
+        for (int next : Graph[cur[cur.size() - 1]]) {
+            if (find(cur.begin(), cur.end(), next) == cur.end()) {
+                auto new_path = cur;
+                new_path.push_back(next);
+
+                if (next == E) {
+                    All.push_back(new_path);
+                } else {
+                    queue.push_back(new_path);
+                    tail++;
+                }
+            }
+        }
+    }
+}
+
 public:
     vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
         this->Graph = graph;
@@ -32,7 +60,9 @@ public:
         All = vector<vector<int>>();
         visit = vector<int>(N, 0);
 
-        dfs(S, vector<int>());
+        // dfs(S, vector<int>());
+
+        bfs();
 
         return All;
     }
