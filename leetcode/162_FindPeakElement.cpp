@@ -1,18 +1,24 @@
+#include<vector>
+using namespace std;
+
+
 class Solution {
 public:
     int findPeakElement(vector<int>& nums) {
-        int l = 0, r = nums.size() - 1, m = (l + r) / 2;
-
-        while (l < r) {
-            // cout << l << " " << m << " " << r << endl;
-            if (nums[m] < nums[m + 1]) {
-                l = m + 1;
+        int left = 0, right = nums.size() - 1;
+        
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            
+            if ((mid == 0 || nums[mid] > nums[mid - 1]) && (mid == nums.size() - 1 || nums[mid] > nums[mid + 1])) return mid;
+            
+            if (mid > 0 && nums[mid] < nums[mid - 1]) {
+                right = mid - 1;
             } else {
-                r = m;
+                left = mid + 1;
             }
-            m = (l + r) / 2;
         }
-
-        return l;
+        
+        return left;
     }
 };
