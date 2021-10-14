@@ -1,26 +1,29 @@
+#include<vector>
+using namespace std;
+
+
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
-        int p = -1, q = nums.size();
-
-        for (int i = 0; i < nums.size(); i++) {
-            while (p + 1 < nums.size() && nums[p + 1] == 0) p++;
-            while (q - 1 >= 0 && nums[q - 1] == 2) q--;
-            if (i <= p) continue;
-            if (i >= q) break;
-
-            if (nums[i] == 2) {
-                if (nums[q - 1] == 0) {
-                    nums[p + 1] = 0;
-                    p++;
-                }
-                nums[q - 1] = 2;
-                q--;
-            } else if (nums[i] == 0) {
-                nums[p + 1] = 0;
-                p++;
+        auto swap = [&](int i, int j) {
+            int tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+        };
+        
+        int left = 0, right = nums.size() - 1;
+        int cur = left;
+        while (cur <= right) {
+            if (nums[cur] == 0) {
+                swap(left, cur);
+                left++;
+                cur++;
+            } else if (nums[cur] == 2) {
+                swap(cur, right);
+                right--;
+            } else {
+                cur++;
             }
-            if (i > p && i < q) nums[i] = 1;
         }
     }
 };
