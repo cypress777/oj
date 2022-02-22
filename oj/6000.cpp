@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// https://loj.ac/p/6000
+
 struct Edge {
     int to, res, rev;
     Edge() {}
