@@ -89,13 +89,10 @@ struct RGraph {
             int path_flow = INT_MAX;
 
             for (int i = s; i != t; i = rgraph[i][path[i]].to) {
-                if (path[i] == -1) continue;
                 path_flow = min(path_flow, rgraph[i][path[i]].res);
             }
 
             for (int i = s; i != t; i = rgraph[i][path[i]].to) {
-                if (path[i] == -1) continue;
-
                 rgraph[i][path[i]].res -= path_flow;
                 auto edge = rgraph[i][path[i]];
                 rgraph[edge.to][edge.rev].res += path_flow;
